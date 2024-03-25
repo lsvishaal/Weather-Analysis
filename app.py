@@ -1,29 +1,50 @@
-from flask import Flask
-import sqlconnect as mq
+from flask import Flask, render_template, jsonify
+from sql_connect import get_connection, fetch_weather_data
+import pymysql
+import json
+import datetime
 
 app = Flask(__name__)
 
-
-# Route to display Madurai weather data
-@app.route("/madurai_weather")
-def madurai_weather():
-    # Execute SQL query to fetch Madurai weather data from the database
-    mq.mycursor.execute("SELECT * FROM madurai_weather")
-    # Fetch all rows from the result set
-    madurai_data = mq.mycursor.fetchall()
-    # Return the data as a string (you can format it as needed)
-    return str(madurai_data)
+# Define database connection parameters
+DB_HOST = "127.0.0.1"  # Replace with your database host
+DB_USER = "root"  # Replace with your database username
+DB_PASSWORD = "root"  # Replace with your database password
+DB_NAME = "weather_db"  # Replace with your database name
 
 
-# Route to display Chennai weather data
-@app.route("/chennai_weather")
-def chennai_weather():
-    # Execute SQL query to fetch Chennai weather data from the database
-    mq.mycursor.execute("SELECT * FROM chennai_weather")
-    # Fetch all rows from the result set
-    chennai_data = mq.mycursor.fetchall()
-    # Return the data as a string (you can format it as needed)
-    return str(chennai_data)
+# Function to establish database connection
+def get_connection():
+    connection = pymysql.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        db=DB_NAME,
+        cursorclass=pymysql.cursors.DictCursor,
+    )
+    return connection
+
+
+@app.route("/weather_chart")
+def weather_chart():
+    connection = get_connection()
+    city_data = fetch_weather_data("chennai", connection)
+    connection.close()
+
+    # Extract labels and temperatures from city_data
+    labels = [
+        data["time"].strftime("%%Y-%m-%d %H:%M:%S") for data in city_data
+    ]
+    temperatures = [data["temperature_2m"] for data in city_data]
+
+    chart_data = {
+        "labels": labels,
+        "temperatures": temperatures,
+    }
+
+    chart_data_json = json.dumps(chart_data)
+
+    return render_template("chennai_weather_chart.html", chart_data_json=chart_data_json)
 
 
 if __name__ == "__main__":
