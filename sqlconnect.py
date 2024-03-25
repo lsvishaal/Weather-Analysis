@@ -1,6 +1,6 @@
 import mysql.connector
 
-mydb = mysql.connector.connect(host="localhost",user="root",password="####", database="weather_db")
+mydb = mysql.connector.connect(host="localhost",user="root",password="root", database="weather_db")
 # print(mydb) sucessful
 
 mycursor=mydb.cursor()

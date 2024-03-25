@@ -1,49 +1,51 @@
 import requests
 import json
 import sqlconnect as mq
-#madurai
-#api url
-url1="https://api.open-meteo.com/v1/forecast?latitude=9.919&longitude=78.1195&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,cloud_cover,surface_pressure,wind_speed_10m,wind_direction_10m"
-response1 = requests.get(url1)
 
-# Print the response
-#print(response.content.decode())
-x1=json.dumps(response1.json(),indent=2)
-y1=json.loads(x1)
-print(x1)
-#print(y.keys())
-current_values1=y1['current']
-# print(current_values['temperature_2m'])
-# j="insert into chennai_weather(temprature) values({})".format(current_values['temperature_2m'])
-# mq.mycursor.execute(j)
-# mq.mydb.commit()
+# Function to fetch data from API and insert into SQL table
+def fetch_and_insert_data(url, city):
+    # Fetch data from the API
+    response = requests.get(url)
 
-#chennai
+    # Parse JSON response
+    data = response.json()
 
-url2="https://api.open-meteo.com/v1/forecast?latitude=13.0878&longitude=80.2785&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,cloud_cover,surface_pressure,wind_speed_10m,wind_direction_10m"
+    # Extract hourly data
+    hourly_data = data.get('hourly', [])
 
-response2=requests.get(url2)
+    # Extract relevant information from hourly data
+    records = []
+    for entry in hourly_data:
+        temperature = entry.get('temperature_2m')
+        apparent_temperature = entry.get('apparent_temperature')
+        surface_pressure = entry.get('surface_pressure')
+        humidity = entry.get('relative_humidity_2m')
+        windspeed = entry.get('wind_speed_10m')
+        precipitation = entry.get('precipitation')
+        day = entry.get('is_day')
+        records.append((temperature, apparent_temperature, surface_pressure, humidity, windspeed, precipitation, day))
 
-x2=json.dumps(response2.json(),indent=2)
-y2=json.loads(x2)
-print(x2)
-current_values2=y2['current']
+    # Batch insertion into SQL table
+    batch_size = 100  # Adjust batch size as needed
+    for i in range(0, len(records), batch_size):
+        batch = records[i:i+batch_size]
+        insert_batch(batch, city)
 
-#functions to insert the values from the api to the database
+# Function to insert a batch of records into SQL table
+def insert_batch(batch, city):
+    # Construct the SQL query for batch insertion
+    query = f"INSERT INTO {city}_weather (temperature, apparent_temperature, surface_pressure, humidity, windspeed, precipitation, day) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 
-def madurai_values(dict_values=current_values1):
-    str1="insert into madurai_weather(temprature,apparent_temprature,surface_pressure,humidity,windspead,precipitation,day) values({},{},{},{},{},{},{})".format(current_values1['temperature_2m'],current_values1['apparent_temperature'],current_values1['surface_pressure'],current_values1['relative_humidity_2m'],current_values1['wind_speed_10m'],current_values1['precipitation'],current_values1['is_day'])
-    mq.mycursor.execute(str1)
+    # Execute the batch insertion query
+    mq.mycursor.executemany(query, batch)
     mq.mydb.commit()
-madurai_values()
-def chennai_values(dict_values=current_values2):
-    str1="insert into chennai_weather(temprature,apparent_temprature,surface_pressure,humidity,windspead,precipitation,day) values({},{},{},{},{},{},{})".format(current_values2['temperature_2m'],current_values2['apparent_temperature'],current_values2['surface_pressure'],current_values2['relative_humidity_2m'],current_values2['wind_speed_10m'],current_values2['precipitation'],current_values2['is_day'])
-    mq.mycursor.execute(str1)
-    mq.mydb.commit()
-#chennai_values()
-    
 
+# Define the URLs for Chennai and Madurai
+chennai_url = "https://archive-api.open-meteo.com/v1/archive?latitude=13.0878&longitude=80.2785&start_date=2023-12-01&end_date=2024-03-24&hourly=temperature_2m,rain&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_hours&timezone=auto"
+madurai_url = "https://archive-api.open-meteo.com/v1/archive?latitude=9.919&longitude=78.1195&start_date=2023-12-01&end_date=2024-03-24&hourly=temperature_2m,rain&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_hours&timezone=auto"
 
+# Fetch and insert data for Chennai
+fetch_and_insert_data(chennai_url, "chennai")
 
-
-
+# Fetch and insert data for Madurai
+fetch_and_insert_data(madurai_url, "madurai")
