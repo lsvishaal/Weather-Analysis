@@ -5,11 +5,10 @@ import datetime
 app = Flask(__name__)
 
 # Define database connection parameters
-DB_HOST = "127.0.0.1"  # Replace with your database host
+DB_HOST = "127.0.0.1"  # Replace with your host
 DB_USER = "root"  # Replace with your database username
 DB_PASSWORD = "root"  # Replace with your database password
 DB_NAME = "weather_db"  # Replace with your database name
-
 
 # Function to establish database connection
 def get_connection():
@@ -22,18 +21,16 @@ def get_connection():
     )
     return connection
 
-
 # Function to fetch weather data
 def fetch_weather_data(city, connection):
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT * FROM {city}_weather WHERE HOUR(time) = 9")
         return cursor.fetchall()
 
-
-@app.route("/api/weather-data")
-def weather_data():
+@app.route("/api/weather-data/<city>")
+def weather_data(city):
     connection = get_connection()
-    city_data = fetch_weather_data("chennai", connection)
+    city_data = fetch_weather_data(city, connection)
     connection.close()
 
     # Extract labels and temperatures from city_data
@@ -47,11 +44,9 @@ def weather_data():
 
     return jsonify(chart_data)
 
-
 @app.route("/weather_chart")
 def weather_chart():
-    return render_template("chennai_weather_chart.html")
-
+    return render_template("chennai_madurai_weather_chart.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
