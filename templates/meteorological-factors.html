@@ -6,6 +6,7 @@
     <title>Weather Data Analysis</title>
 
     <!-- TailwindCSS -->
+
     <link
       href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
       rel="stylesheet"
@@ -13,9 +14,100 @@
     />
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
+
+    <!-- NAVBAR -->
+    <div class="navbar bg-base-100">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a href="#temperatureChart">Temperature</a></li>
+            <li><a href="#apparentweatherChart">Apparent Temperature</a></li>
+            <hr style="border-color: palevioletred; border-width: 1px" />
+            <li><a href="#pressureChart">meteorological_factors</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+      </div>
+
+      <div class="navbar-end">
+        <button class="btn btn-ghost btn-circle">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </button>
+        <button class="btn btn-ghost btn-circle">
+          <div class="indicator">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+            <span class="badge badge-xs badge-primary indicator-item"></span>
+          </div>
+        </button>
+        <label class="flex cursor-pointer gap-2">
+          <span class="label-text">Retro</span>
+          <input
+            type="checkbox"
+            value="synthwave"
+            class="toggle theme-controller"
+          />
+          <span class="label-text">Synthwave</span>
+        </label>
+      </div>
+    </div>
   </head>
+  <br />
+  <br />
 
   <body>
     <!-- Surface Pressure Chart -->
@@ -27,10 +119,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Fetch data from SQL table
         Promise.all([
-          fetch("/api/weather-data/chennai").then((response) =>
+          fetch("/api/meteorological-factors-data/chennai").then((response) =>
             response.json()
           ),
-          fetch("/api/weather-data/madurai").then((response) =>
+          fetch("/api/meteorological-factors-data/madurai").then((response) =>
             response.json()
           ),
         ])
@@ -40,14 +132,14 @@
               datasets: [
                 {
                   label: "Chennai Surface Pressure",
-                  data: chennaiData.surfacePressure,
+                  data: chennaiData.surfacePressures,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
                   label: "Madurai Surface Pressure",
-                  data: maduraiData.surfacePressure,
+                  data: maduraiData.surfacePressures,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
                   borderWidth: 1,
@@ -86,10 +178,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Fetch data from SQL table
         Promise.all([
-          fetch("/api/weather-data/chennai").then((response) =>
+          fetch("/api/meteorological-factors-data/chennai").then((response) =>
             response.json()
           ),
-          fetch("/api/weather-data/madurai").then((response) =>
+          fetch("/api/meteorological-factors-data/madurai").then((response) =>
             response.json()
           ),
         ])
@@ -99,14 +191,14 @@
               datasets: [
                 {
                   label: "Chennai Relative Humidity",
-                  data: chennaiData.relativeHumidity,
+                  data: chennaiData.relativeHumidities,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
                   label: "Madurai Relative Humidity",
-                  data: maduraiData.relativeHumidity,
+                  data: maduraiData.relativeHumidities,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
                   borderWidth: 1,
@@ -145,10 +237,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Fetch data from SQL table
         Promise.all([
-          fetch("/api/weather-data/chennai").then((response) =>
+          fetch("/api/meteorological-factors-data/chennai").then((response) =>
             response.json()
           ),
-          fetch("/api/weather-data/madurai").then((response) =>
+          fetch("/api/meteorological-factors-data/madurai").then((response) =>
             response.json()
           ),
         ])
@@ -158,14 +250,14 @@
               datasets: [
                 {
                   label: "Chennai Wind Speed",
-                  data: chennaiData.windSpeed,
+                  data: chennaiData.windSpeeds,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
                   label: "Madurai Wind Speed",
-                  data: maduraiData.windSpeed,
+                  data: maduraiData.windSpeeds,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
                   borderWidth: 1,
@@ -173,9 +265,7 @@
               ],
             };
 
-            const ctx = document
-              .getElementById("windChart")
-              .getContext("2d");
+            const ctx = document.getElementById("windChart").getContext("2d");
 
             new Chart(ctx, {
               type: "line",
