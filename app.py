@@ -10,6 +10,7 @@ DB_USER = "root"  # Replace with your database username
 DB_PASSWORD = "root"  # Replace with your database password
 DB_NAME = "weather_db"  # Replace with your database name
 
+
 # Function to establish database connection
 def get_connection():
     connection = pymysql.connect(
@@ -21,11 +22,22 @@ def get_connection():
     )
     return connection
 
+
 # Function to fetch weather data
 def fetch_weather_data(city, connection):
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT * FROM {city}_weather WHERE HOUR(time) = 9")
         return cursor.fetchall()
+
+
+# Function to fetch apparent temperature data
+def fetch_apparent_temp_data(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT time, apparent_temperature FROM {city}_weather WHERE HOUR(time) = 9"
+        )
+        return cursor.fetchall()
+
 
 @app.route("/api/weather-data/<city>")
 def weather_data(city):
@@ -44,9 +56,38 @@ def weather_data(city):
 
     return jsonify(chart_data)
 
-@app.route("/weather_chart")
+
+@app.route("/temperature")
 def weather_chart():
-    return render_template("chennai_madurai_weather_chart.html")
+    return render_template("temperature.html")
+
+
+@app.route("/api/apparent-weather-data/<city>")
+def apparent_weather_data(city):
+    connection = get_connection()
+    city_data = fetch_apparent_temp_data(city, connection)
+    connection.close()
+
+    # Extract labels and apparent temperatures from city_data
+    labels = [data["time"].strftime("%Y-%m-%d %H:%M:%S") for data in city_data]
+    apparent_temperatures = [data["apparent_temperature"] for data in city_data]
+
+    chart_data = {
+        "labels": labels,
+        "apparentTemperatures": apparent_temperatures,
+    }
+
+    return jsonify(chart_data)
+
+
+@app.route("/meteorological-factors")
+def meteorological_factors_chart():
+    return render_template("index.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

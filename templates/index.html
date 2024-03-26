@@ -1,170 +1,197 @@
 <!DOCTYPE html>
-<html lang="en" id="html-tag" data-theme="retro">
+<html lang="en" data-theme="retro">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Data Analysis</title>
+
+    <!-- TailwindCSS -->
     <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@^2.0/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3" defer></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
-      defer
-    ></script>
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@4.7.3/dist/full.min.css"
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
       rel="stylesheet"
       type="text/css"
     />
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather Dashboard</title>
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
   </head>
 
   <body>
-    <div class="navbar bg-base-100">
-      <div class="navbar-start">
-        <div class="dropdown">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h7"
-              />
-            </svg>
-          </div>
-          <ul
-            tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li><a>Homepage</a></li>
-            <li><a>Portfolio</a></li>
-            <li><a>About</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="navbar-center">
-        <a class="btn btn-ghost text-xl">daisyUI</a>
-      </div>
-      <div class="navbar-end">
-        <button class="btn btn-ghost btn-circle">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </button>
-        <button class="btn btn-ghost btn-circle">
-          <div class="indicator">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span class="badge badge-xs badge-primary indicator-item"></span>
-          </div>
-        </button>
-      </div>
+    <!-- Surface Pressure Chart -->
+    <div id="surfacePressureChart">
+      <canvas id="pressureChart"></canvas>
     </div>
-    <div
-      class="hero min-h-screen"
-      style="
-        background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);
-      "
-    >
-      <div class="hero-overlay bg-opacity-60"></div>
-      <div class="hero-content text-center text-neutral-content">
-        <div class="max-w-md">
-          <h1 class="mb-5 text-5xl font-bold">Hello there</h1>
-          <p class="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p>
-          <button class="btn btn-primary">Get Started</button>
-        </div>
-      </div>
-    </div>
-
-    <canvas id="weatherChartMadurai" width="400" height="200"></canvas>
-    <canvas id="weatherChartChennai" width="400" height="200"></canvas>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Get data passed from Flask
-        const maduraiData = JSON.parse("{{ madurai_data | tojson | safe }}");
-        const chennaiData = JSON.parse("{{ chennai_data | tojson | safe }}");
-
-        // Get canvas elements
-        const ctxMadurai = document
-          .getElementById("weatherChartMadurai")
-          .getContext("2d");
-        const ctxChennai = document
-          .getElementById("weatherChartChennai")
-          .getContext("2d");
-
-        // Function to render chart
-        function renderChart(ctx, data, city) {
-          const labels = data.map((row) => row.time);
-          const temperatures = data.map((row) => row.temperature_2m);
-
-          new Chart(ctx, {
-            type: "line",
-            data: {
-              labels: labels,
+        // Fetch data from SQL table
+        Promise.all([
+          fetch("/api/weather-data/chennai").then((response) =>
+            response.json()
+          ),
+          fetch("/api/weather-data/madurai").then((response) =>
+            response.json()
+          ),
+        ])
+          .then(([chennaiData, maduraiData]) => {
+            const chartData = {
+              labels: chennaiData.labels,
               datasets: [
                 {
-                  label: `${city} Temperature (°C)`,
-                  data: temperatures,
+                  label: "Chennai Surface Pressure",
+                  data: chennaiData.surfacePressure,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
+                {
+                  label: "Madurai Surface Pressure",
+                  data: maduraiData.surfacePressure,
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth: 1,
+                },
               ],
-            },
-            options: {
-              scales: {
-                yAxes: [
-                  {
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  },
-                ],
-              },
-            },
-          });
-        }
+            };
 
-        // Render charts for Madurai and Chennai
-        renderChart(ctxMadurai, maduraiData, "Madurai");
-        renderChart(ctxChennai, chennaiData, "Chennai");
+            const ctx = document
+              .getElementById("pressureChart")
+              .getContext("2d");
+
+            new Chart(ctx, {
+              type: "line",
+              data: chartData,
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: "Surface Pressure",
+                },
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+          });
+      });
+    </script>
+
+    <!-- Relative Humidity Chart -->
+    <div id="relativeHumidityChart">
+      <canvas id="humidityChart"></canvas>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fetch data from SQL table
+        Promise.all([
+          fetch("/api/weather-data/chennai").then((response) =>
+            response.json()
+          ),
+          fetch("/api/weather-data/madurai").then((response) =>
+            response.json()
+          ),
+        ])
+          .then(([chennaiData, maduraiData]) => {
+            const chartData = {
+              labels: chennaiData.labels,
+              datasets: [
+                {
+                  label: "Chennai Relative Humidity",
+                  data: chennaiData.relativeHumidity,
+                  backgroundColor: "rgba(255, 99, 132, 0.2)",
+                  borderColor: "rgba(255, 99, 132, 1)",
+                  borderWidth: 1,
+                },
+                {
+                  label: "Madurai Relative Humidity",
+                  data: maduraiData.relativeHumidity,
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            };
+
+            const ctx = document
+              .getElementById("humidityChart")
+              .getContext("2d");
+
+            new Chart(ctx, {
+              type: "line",
+              data: chartData,
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: "Relative Humidity",
+                },
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+          });
+      });
+    </script>
+
+    <!-- Wind Speed Chart -->
+    <div id="windSpeedChart">
+      <canvas id="windChart"></canvas>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fetch data from SQL table
+        Promise.all([
+          fetch("/api/weather-data/chennai").then((response) =>
+            response.json()
+          ),
+          fetch("/api/weather-data/madurai").then((response) =>
+            response.json()
+          ),
+        ])
+          .then(([chennaiData, maduraiData]) => {
+            const chartData = {
+              labels: chennaiData.labels,
+              datasets: [
+                {
+                  label: "Chennai Wind Speed",
+                  data: chennaiData.windSpeed,
+                  backgroundColor: "rgba(255, 99, 132, 0.2)",
+                  borderColor: "rgba(255, 99, 132, 1)",
+                  borderWidth: 1,
+                },
+                {
+                  label: "Madurai Wind Speed",
+                  data: maduraiData.windSpeed,
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth: 1,
+                },
+              ],
+            };
+
+            const ctx = document
+              .getElementById("windChart")
+              .getContext("2d");
+
+            new Chart(ctx, {
+              type: "line",
+              data: chartData,
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: "Wind Speed",
+                },
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+          });
       });
     </script>
   </body>
