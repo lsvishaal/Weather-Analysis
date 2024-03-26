@@ -3,10 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chennai and Madurai Weather Chart</title>
+    <title>Chennai Weather Chart</title>
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
-    
   </head>
   <body>
     <div>
@@ -15,42 +14,46 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const chartData = JSON.parse(`{
-  
-          "labels": ["2022-01-01", "2022-01-02", "2022-01-03"],
-  
-          "temperatures": [20, 22, 21]
-  
-        }`);
-
-        const ctx = document.getElementById("weatherChart").getContext("2d");
-
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: chartData.labels,
-            datasets: [
-              {
-                label: "Temperature (°C)",
-                data: chartData.temperatures,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              yAxes: [
+        // Fetch data from SQL table
+        fetch("/api/weather-data")
+          .then((response) => response.json())
+          .then((data) => {
+            const chartData = {
+              labels: data.labels,
+              datasets: [
                 {
-                  ticks: {
-                    beginAtZero: true,
-                  },
+                  label: "Temperature (°C)",
+                  data: data.temperatures,
+                  backgroundColor: "rgba(255, 99, 132, 0.2)",
+                  borderColor: "rgba(255, 99, 132, 1)",
+                  borderWidth: 1,
                 },
               ],
-            },
-          },
-        });
+            };
+
+            const ctx = document
+              .getElementById("weatherChart")
+              .getContext("2d");
+
+            new Chart(ctx, {
+              type: "line",
+              data: chartData,
+              options: {
+                scales: {
+                  yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                      },
+                    },
+                  ],
+                },
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching weather data:", error);
+          });
       });
     </script>
   </body>

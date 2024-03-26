@@ -35,20 +35,14 @@ cursor = conn.cursor()
 cursor.execute(
     """CREATE TABLE IF NOT EXISTS madurai_weather (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    Date TEXT,
-                    Temperature_Celsius FLOAT,
-                    Dew_Point_Celsius FLOAT,
-                    Humidity FLOAT,
-                    Sea_Level_PressurehPa FLOAT,
-                    VisibilityKm FLOAT,
-                    Wind_Direction TEXT,
-                    Wind_SpeedKmh FLOAT,
-                    Gust_SpeedKmh FLOAT,
-                    Precipitationmm FLOAT,
-                    Events TEXT,
-                    Conditions TEXT,
-                    WindDirDegrees FLOAT,
-                    DateUTC TEXT
+                    time DATETIME,
+                    temperature_2m FLOAT,
+                    apparent_temperature FLOAT,
+                    surface_pressure FLOAT,
+                    relative_humidity_2m FLOAT,
+                    wind_speed_10m FLOAT,
+                    precipitation FLOAT,
+                    is_day BOOLEAN
                 );"""
 )
 

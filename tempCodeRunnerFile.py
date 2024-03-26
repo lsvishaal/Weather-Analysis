@@ -1,5 +1,7 @@
 from flask import Flask, render_template, jsonify
+from sql_connect import get_connection, fetch_weather_data
 import pymysql
+import json
 import datetime
 
 app = Flask(__name__)
@@ -23,21 +25,16 @@ def get_connection():
     return connection
 
 
-# Function to fetch weather data
-def fetch_weather_data(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM {city}_weather WHERE HOUR(time) = 9")
-        return cursor.fetchall()
-
-
-@app.route("/api/weather-data")
-def weather_data():
+@app.route("/weather_chart")
+def weather_chart():
     connection = get_connection()
     city_data = fetch_weather_data("chennai", connection)
     connection.close()
 
     # Extract labels and temperatures from city_data
-    labels = [data["time"].strftime("%Y-%m-%d %H:%M:%S") for data in city_data]
+    labels = [
+        data["time"].strftime("%%Y-%m-%d %H:%M:%S") for data in city_data
+    ]
     temperatures = [data["temperature_2m"] for data in city_data]
 
     chart_data = {
@@ -45,12 +42,9 @@ def weather_data():
         "temperatures": temperatures,
     }
 
-    return jsonify(chart_data)
+    chart_data_json = json.dumps(chart_data)
 
-
-@app.route("/weather_chart")
-def weather_chart():
-    return render_template("chennai_weather_chart.html")
+    return render_template("chennai_weather_chart.html", chart_data_json=chart_data_json)
 
 
 if __name__ == "__main__":
