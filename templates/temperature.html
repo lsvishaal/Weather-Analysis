@@ -51,7 +51,7 @@
             <li><a href="#temperatureChart">Temperature</a></li>
             <li><a href="#apparentweatherChart">Apparent Temperature</a></li>
             <hr style="border-color: palevioletred; border-width: 1px;">
-            <li><a href="#pressureChart">meteorological_factors</a></li>
+            <li><a href="/meteorological-factors">meteorological_factors</a></li>
           </ul>
         </div>
       </div>
@@ -113,7 +113,7 @@
     <!-- HERO-SECTION -->
 
     <div
-      class="hero min-h-screen"
+      class="hero min-h-[10vh]"
       "
     >
       <div class="hero-overlay bg-opacity-60"></div>
@@ -130,8 +130,11 @@
       </div>
     </div><br><br>
 <!-- Temperature CHART start-->
+    <h1 class="mb-5 text-4xl font-bold pl-9">Temperature</h1>
     <div id="temperatureChart">
-      <canvas id="weatherChart"></canvas>
+      <div class=" pr-7">
+        <canvas id="weatherChart"></canvas>
+      </div>
     </div>
 
     <script>
@@ -216,7 +219,9 @@
   <br><br>
   <hr style="border-color: black; border-width: 1px;">
   <br><br>
-    <!-- Apparent_Temperature Chart START -->
+<!-- Apparent_Temperature Chart START -->
+<h1 class="mb-5 text-4xl font-bold pl-9">Apparent_Temperature</h1>
+<div id="apparentTemperatureChart" class=" pr-7">
   <div>
     <canvas id="apparentweatherChart"></canvas>
   </div>
