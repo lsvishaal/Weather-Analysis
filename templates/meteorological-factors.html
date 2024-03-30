@@ -14,6 +14,13 @@
       }
     </style>
 
+    <link
+      id="favicon_1"
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>"
+    />
+
     <!-- TailwindCSS -->
 
     <link
@@ -60,7 +67,11 @@
             class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
             <li><a href="/temperature">Temperature</a></li>
-            <li><a href="/temperature#apparentTemperatureChart">Apparent Temperature</a></li>
+            <li>
+              <a href="/temperature#apparentTemperatureChart"
+                >Apparent Temperature</a
+              >
+            </li>
             <hr style="border-color: palevioletred; border-width: 1px" />
             <li>
               <a href="/meteorological-factors">meteorological_factors</a>
@@ -68,47 +79,39 @@
           </ul>
         </div>
       </div>
+      <div>
+        <svg
+          id="favicon_chart"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-2 -3 24 24"
+          width="28"
+          fill="#d08581"
+        >
+          <path
+            d="M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z"
+          ></path>
+        </svg>
+      </div>
       <!-- Navbar Center -->
+
       <div class="navbar-center">
         <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
       </div>
+      <div>
+        <svg
+          id="favicon_chart"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-2 -3 24 24"
+          width="28"
+          fill="#d08581"
+        >
+          <path
+            d="M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z"
+          ></path>
+        </svg>
+      </div>
 
       <div class="navbar-end">
-        <button class="btn btn-ghost btn-circle">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </button>
-        <button class="btn btn-ghost btn-circle">
-          <div class="indicator">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-            <span class="badge badge-xs badge-primary indicator-item"></span>
-          </div>
-        </button>
         <label class="flex cursor-pointer gap-2">
           <span class="label-text">Retro</span>
           <input
@@ -116,40 +119,47 @@
             value="synthwave"
             class="toggle theme-controller"
           />
+
           <span class="label-text">Synthwave</span>
         </label>
       </div>
     </div>
     <!-- Navbar End -->
-    <br>
-    <br>
 
     <!-- HERO-SECTION -->
 
     <div
-      class="hero min-h-[10vh]"
+      class="hero min-h-screen"
+      style="
+        background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);
       "
     >
       <div class="hero-overlay bg-opacity-60"></div>
       <div class="hero-content text-center text-neutral-content">
         <div class="max-w-md">
-          <h1 class="mb-5 text-5xl font-bold">Hello there</h1>
-          <p class="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
+          <h1 class="mb-5 text-4xl font-bold">Welcome to MeteorAnalytica</h1>
+          <p class="mb-5 text-justify">
+            Dive into the fascinating world of meteorological data. <br />
+            Explore charts and graphs that depict various weather factors such
+            as surface pressure, relative humidity, and wind speed. Our data is
+            sourced from multiple locations, providing a comprehensive view of
+            weather patterns.
           </p>
-          <button class="btn btn-primary" onclick="location.href='#temperatureChart'">Get Started</button>
+          <button
+            class="btn btn-primary"
+            onclick="location.href='#temperatureChart'"
+          >
+            Get Started
+          </button>
         </div>
       </div>
-    </div> <!-- red line seperator -->
-    <hr style="border-color: black; border-width: 1px;">
-    <br><br>
-
-
+    </div>
+    <!-- red line seperator -->
+    <hr style="border-color: black; border-width: 1px" />
+    <br /><br />
 
     <!-- Surface Pressure Chart -->
-    <h1 class="mb-5 text-4xl font-bold pl-9">Surface Pressure</h1>
+    <h1 class="mb-5 text-4xl font- pl-9">Surface Pressure</h1>
     <div id="surfacePressureChart">
       <canvas id="pressureChart" class="pr-7"></canvas>
     </div>
@@ -170,14 +180,14 @@
               labels: chennaiData.labels,
               datasets: [
                 {
-                  label: "Chennai Surface Pressure",
+                  label: "Chennai Surface Pressure (Pa)",
                   data: chennaiData.surfacePressures,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
-                  label: "Madurai Surface Pressure",
+                  label: "Madurai Surface Pressure (Pa)",
                   data: maduraiData.surfacePressures,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
@@ -197,7 +207,7 @@
                 responsive: true,
                 title: {
                   display: true,
-                  text: "Surface Pressure",
+                  text: "Surface Pressure (Pa)",
                 },
               },
             });
@@ -209,12 +219,12 @@
     </script>
 
     <!-- red line seperator -->
-  <br><br>
-  <hr style="border-color: black; border-width: 1px;">
-  <br><br>
+    <br /><br />
+    <hr style="border-color: black; border-width: 1px" />
+    <br /><br />
 
     <!-- Relative Humidity Chart -->
-    <h1 class="mb-5 text-4xl font-bold pl-9">Relative Humidity</h1>
+    <h1 class="mb-5 text-4xl font- pl-9">Relative Humidity</h1>
     <div id="relativeHumidityChart">
       <canvas id="humidityChart"></canvas>
     </div>
@@ -235,14 +245,14 @@
               labels: chennaiData.labels,
               datasets: [
                 {
-                  label: "Chennai Relative Humidity",
+                  label: "Chennai Relative Humidity (%)",
                   data: chennaiData.relativeHumidities,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
-                  label: "Madurai Relative Humidity",
+                  label: "Madurai Relative Humidity (%)",
                   data: maduraiData.relativeHumidities,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
@@ -262,7 +272,7 @@
                 responsive: true,
                 title: {
                   display: true,
-                  text: "Relative Humidity",
+                  text: "Relative Humidity (%)",
                 },
               },
             });
@@ -273,13 +283,13 @@
       });
     </script>
 
-     <!-- red line seperator -->
-  <br><br>
-  <hr style="border-color: black; border-width: 1px;">
-  <br><br>
+    <!-- red line seperator -->
+    <br /><br />
+    <hr style="border-color: black; border-width: 1px" />
+    <br /><br />
 
     <!-- Wind Speed Chart -->
-    <h1 class="mb-5 text-4xl font-bold pl-9">Wind Speed</h1>
+    <h1 class="mb-5 text-4xl font- pl-9">Wind Speed</h1>
     <div id="windSpeedChart">
       <canvas id="windChart"></canvas>
     </div>
@@ -300,14 +310,14 @@
               labels: chennaiData.labels,
               datasets: [
                 {
-                  label: "Chennai Wind Speed",
+                  label: "Chennai Wind Speed (Km/h)",
                   data: chennaiData.windSpeeds,
                   backgroundColor: "rgba(255, 99, 132, 0.2)",
                   borderColor: "rgba(255, 99, 132, 1)",
                   borderWidth: 1,
                 },
                 {
-                  label: "Madurai Wind Speed",
+                  label: "Madurai Wind Speed (Km/h)",
                   data: maduraiData.windSpeeds,
                   backgroundColor: "rgba(54, 162, 235, 0.2)",
                   borderColor: "rgba(54, 162, 235, 1)",
@@ -325,7 +335,7 @@
                 responsive: true,
                 title: {
                   display: true,
-                  text: "Wind Speed",
+                  text: "Wind Speed (Km/h)",
                 },
               },
             });
@@ -335,9 +345,8 @@
           });
       });
     </script>
- <br><br><br><br>
- <hr style="border-color: black; border-width: 1px;">
-
+    <br /><br /><br />
+    <hr style="border-color: black; border-width: 1px" />
   </body>
 
   <footer>
@@ -395,5 +404,4 @@
       </aside>
     </footer>
   </footer>
-
 </html>
