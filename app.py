@@ -68,6 +68,10 @@ def weather_data(city):
 
     return jsonify(chart_data)
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 
 @app.route("/temperature")
 def weather_chart():
