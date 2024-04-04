@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="retro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temperature Comparison</title>
+
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>">
+    <!-- TailwindCSS -->
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+
+    <!-- Add Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
+
+        
+        <!-- NAVBAR -->
+        <div class="navbar bg-base-100 h-30">
+          <!-- Navbar Start -->
+          <div class="navbar-start">
+            <div class="dropdown">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                </svg>
+              </div>
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li><a href="/temperature">Temperature</a></li>
+                <li><a href="/temperature#apparentTemperatureChart">Apparent Temperature</a></li>
+                <hr style="border-color: palevioletred; border-width: 1px" />
+                <li>
+                  <a href="/meteorological-factors">meteorological_factors</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Navbar Center -->
+
+          <div class="navbar-center">
+            <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+          </div>
+
+          <div class="navbar-end">
+            <label class="flex cursor-pointer gap-2">
+              <span class="label-text">Retro</span>
+              <input
+                type="checkbox"
+                value="synthwave"
+                class="toggle theme-controller"
+              />
+              <span class="label-text">Synthwave</span>
+              
+            </label>
+          </div>
+        </div>
+        <!-- Navbar End -->
+        <!-- red line seperator -->
+      <hr style="border-color: black; border-width: 2px;">
+
+
+
+      </head>
+
+
+      <body>
+
+        <!-- HERO-SECTION -->
+
+    <div class="hero min-h-screen" style="background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);">
+      <div class="hero-overlay bg-opacity-60"></div>
+      <div class="hero-content text-center text-neutral-content">
+        <div class="max-w-md ">
+          <h1 class="mb-5 text-4xl font-bold">Welcome to Temperature Comparison</h1>
+          <p class="mb-5 text-justify ">Explore and compare the temperature data of different cities. Our interactive charts provide a clear comparison between temperature and apparent temperature of selected cities.<br> Dive in to discover more.</p>
+          <button class="btn btn-primary">Get Started</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- red line seperator -->
+        <hr style="border-color: black; border-width: 1px;">
+        <br><br>
+    <br><br>
+
+    <!-- Temperature CHART start-->
+        <h1 class="mb-5 text-4xl font- pl-9">Temperature</h1>
+        <div id="temperatureChart">
+          <div class=" pr-7">
+            <canvas id="weatherChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            // Fetch data from SQL table
+            Promise.all([
+              fetch("/api/weather-data/chennai").then((response) =>
+                response.json()
+              ),
+              fetch("/api/weather-data/madurai").then((response) =>
+                response.json()
+              ),
+            ])
+              .then(([chennaiData, maduraiData]) => {
+                const chartData = {
+                  labels: chennaiData.labels,
+                  datasets: [
+                    {
+                      label: "Chennai (°C)",
+                      data: chennaiData.temperatures,
+                      backgroundColor: "rgba(255, 99, 132, 0.2)",
+                      borderColor: "rgba(255, 99, 132, 1)",
+                      borderWidth: 1,
+                      yAxisID: "y",
+                    },
+                    {
+                      label: "Madurai (°C)",
+                      data: maduraiData.temperatures,
+                      backgroundColor: "rgba(54, 162, 235, 0.2)",
+                      borderColor: "rgba(54, 162, 235, 1)",
+                      borderWidth: 1,
+                      yAxisID: "y1",
+                    },
+                  ],
+                };
+
+                const ctx = document
+                  .getElementById("weatherChart")
+                  .getContext("2d");
+
+                new Chart(ctx, {
+                  type: "line",
+                  data: chartData,
+                  options: {
+                    responsive: true,
+                    interaction: {
+                      mode: "index",
+                      intersect: false,
+                    },
+                    stacked: false,
+                    plugins: {
+                      title: {
+                        display: true,
+                        text: "Temperature (°C)", // Added °C here
+                      },
+                    },
+                    scales: {
+                      y: {
+                        type: "linear",
+                        display: true,
+                        position: "left",
+                      },
+                      y1: {
+                        type: "linear",
+                        display: true,
+                        position: "right",
+                        grid: {
+                          drawOnChartArea: false,
+                        },
+                      },
+                    },
+                  },
+                });
+              })
+              .catch((error) => {
+                console.error("Error fetching weather data:", error);
+              });
+          });
+
+        // Toggle theme
+        const toggle = document.querySelector(".toggle.theme-controller");
+        const body = document.querySelector("body");
+
+        toggle.addEventListener("change", function () {
+          if (this.checked) {
+            body.classList.add("synthwave");
+          } else {
+            body.classList.remove("synthwave");
+          }
+        });
+        </script>
+        <!-- Temperature CHART END-->
+    <!-- red line seperator -->
+      <br><br>
+      <hr style="border-color: black; border-width: 1px;">
+      <br><br>
+    <!-- Apparent_Temperature Chart START -->
+    <h1 class="mb-5 text-4xl font- pl-9">Apparent Temperature</h1>
+    <div id="apparentTemperatureChart" class=" pr-7">
+      <div>
+        <canvas id="apparentweatherChart"></canvas>
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Fetch data from SQL table
+          Promise.all([
+            fetch("/api/apparent-weather-data/chennai").then((response) =>
+              response.json()
+            ),
+            fetch("/api/apparent-weather-data/madurai").then((response) =>
+              response.json()
+            ),
+          ])
+            .then(([chennaiData, maduraiData]) => {
+              const chartData = {
+                labels: chennaiData.labels,
+                datasets: [
+                  {
+                    label: "Chennai Apparent (°C)",
+                    data: chennaiData.apparentTemperatures,
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1,
+                    yAxisID: "y",
+                  },
+                  {
+                    label: "Madurai Apparent (°C)",
+                    data: maduraiData.apparentTemperatures,
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1,
+                    yAxisID: "y1",
+                  },
+                ],
+              };
+      
+              const ctx = document
+                .getElementById("apparentweatherChart")
+                .getContext("2d");
+      
+              new Chart(ctx, {
+                type: "line",
+                data: chartData,
+                options: {
+                  responsive: true,
+                  interaction: {
+                    mode: "index",
+                    intersect: false,
+                  },
+                  stacked: false,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: "Apparent Temperature (°C)",
+                    },
+                  },
+                  scales: {
+                    y: {
+                      type: "linear",
+                      display: true,
+                      position: "left",
+                    },
+                    y1: {
+                      type: "linear",
+                      display: true,
+                      position: "right",
+                      grid: {
+                        drawOnChartArea: false,
+                      },
+                    },
+                  },
+                },
+              });
+            })
+            .catch((error) => {
+              console.error("Error fetching weather data:", error);
+            });
+        });
+      </script>
+
+    <!-- red line seperator -->
+    <br><br>
+    <hr style="border-color: black; border-width: 1px;">
+
+    <!-- Apparent_Temperature Chart END -->
+
+      </body>
+      <footer>
+        <footer
+          class="footer footer-center p-10 bg-base-200 text-base-content rounded"
+        >
+          <nav class="grid grid-flow-col gap-4">
+            <a class="link link-hover">About us</a>
+            <a class="link link-hover">Contact</a>
+            <a class="link link-hover">Jobs</a>
+          </nav>
+          <nav>
+            <div class="grid grid-flow-col gap-4">
+              <a
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  class="fill-current"
+                >
+                  <path
+                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
+                  ></path></svg
+              ></a>
+              <a
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  class="fill-current"
+                >
+              <path
+                d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
+              ></path></svg
+          ></a>
+          <a
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              class="fill-current"
+            >
+              <path
+                d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"
+              ></path></svg
+          ></a>
+        </div>
+      </nav>
+      <aside>
+        <p>Copyright © 2024 - All right reserved by ACME Industries Ltd</p>
+      </aside>
+    </footer>
+  </footer>
+</html>
