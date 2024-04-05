@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+from datetime import datetime
 import numpy as np
 import pymysql
 import datetime
@@ -152,6 +153,54 @@ def analysis_data(city):
             "stdDev": std_dev,
         }
     )
+
+
+# Function to fetch apparent temperature data for analysis
+def fetch_apparent_temp_data_for_analysis(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT apparent_temperature FROM {city}_weather WHERE HOUR(time) = 9"
+        )
+        return [row["apparent_temperature"] for row in cursor.fetchall()]
+
+
+@app.route("/api/apparent-analysis-data/<city>")
+def apparent_analysis_data(city):
+    connection = get_connection()
+    apparent_temperatures = fetch_apparent_temp_data_for_analysis(city, connection)
+    connection.close()
+
+    # Calculate mean, median, and standard deviation
+    mean_app_temp = round(np.mean(apparent_temperatures), 2)
+    median_app_temp = round(np.median(apparent_temperatures), 2)
+    std_dev_app = round(np.std(apparent_temperatures), 2)
+
+    return jsonify(
+        {
+            "meanAppTemp": mean_app_temp,
+            "medianAppTemp": median_app_temp,
+            "stdDevApp": std_dev_app,
+        }
+    )
+
+
+
+
+@app.route("/table")
+def table():
+    connection = get_connection()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM chennai_weather WHERE HOUR(time) = 9")
+        chennai_data = cursor.fetchall()
+        for row in chennai_data:
+            row['time'] = row['time'].strftime('%Y-%m-%d')
+
+        cursor.execute("SELECT * FROM madurai_weather WHERE HOUR(time) = 9")
+        madurai_data = cursor.fetchall()
+        for row in madurai_data:
+            row['time'] = row['time'].strftime('%Y-%m-%d')
+    connection.close()
+    return render_template("Table.html", chennai_data=chennai_data, madurai_data=madurai_data)
 
 
 if __name__ == "__main__":

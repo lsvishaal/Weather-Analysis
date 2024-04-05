@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="cyberpunk">
+<html lang="en" data-theme="luxury">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Us</title>
+    <title>Temperature Comparison</title>
 
     <link
       rel="icon"
@@ -24,6 +24,84 @@
         scroll-behavior: smooth;
       }
     </style>
+
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
+
+    <!-- NAVBAR -->
+    <div class="navbar bg-base-100 h-30">
+      <!-- Navbar Start -->
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h7"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a href="/temperature">Temperature</a></li>
+            <li><a href="/temperature#ref2">Apparent Temperature</a></li>
+            <hr style="border-color: palevioletred; border-width: 1px" />
+            <li>
+              <a href="/meteorological-factors">meteorological_factors</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- Navbar Center -->
+
+      <div class="navbar-center">
+        <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+      </div>
+
+      <div class="navbar-end">
+        <label class="flex cursor-pointer gap-2">
+          <span class="label-text">luxury</span>
+          <input
+            type="checkbox"
+            value="luxury"
+            class="toggle theme-controller"
+          />
+          <span class="label-text">Retro</span>
+        </label>
+      </div>
+    </div>
+    <!-- Navbar End -->
+
+    <script>
+      // Select the toggle checkbox and the html element
+      const toggle = document.querySelector(".toggle.theme-controller");
+      const html = document.querySelector("html");
+
+      // Declare a variable to hold the theme value
+      let theme = "luxury";
+
+      // Listen for the change event on the toggle checkbox
+      toggle.addEventListener("change", function () {
+        // When the checkbox is changed, switch the data-theme attribute and update the theme variable
+        if (theme === "luxury") {
+          theme = "retro";
+        } else {
+          theme = "luxury";
+        }
+        html.setAttribute("data-theme", theme);
+      });
+    </script>
   </head>
+
   <body></body>
 </html>

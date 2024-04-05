@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="luxury">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Temperature Comparison</title>
+
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,<svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>"
+        />
+        <!-- TailwindCSS -->
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
+            rel="stylesheet"
+            type="text/css"
+        />
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <style>
+            html {
+                scroll-behavior: smooth;
+            }
+        </style>
+
+        <!-- Add Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
+
+        <!-- NAVBAR -->
+        <div class="navbar bg-base-100 h-30">
+            <!-- Navbar Start -->
+            <div class="navbar-start">
+                <div class="dropdown">
+                    <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h7"
+                            />
+                        </svg>
+                    </div>
+                    <ul
+                        tabindex="0"
+                        class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                    >
+                        <li><a href="/temperature">Temperature</a></li>
+                        <li><a href="/temperature#ref2">Apparent Temperature</a></li>
+                        <hr style="border-color: palevioletred; border-width: 1px" />
+                        <li>
+                            <a href="/meteorological-factors">meteorological_factors</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Navbar Center -->
+
+            <div class="navbar-center">
+                <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+            </div>
+
+            <div class="navbar-end">
+                <label class="flex cursor-pointer gap-2">
+                    <span class="label-text">luxury</span>
+                    <input
+                        type="checkbox"
+                        value="luxury"
+                        class="toggle theme-controller"
+                    />
+                    <span class="label-text">Retro</span>
+                </label>
+            </div>
+        </div>
+        <!-- Navbar End -->
+
+        <script>
+            // Select the toggle checkbox and the html element
+            const toggle = document.querySelector(".toggle.theme-controller");
+            const html = document.querySelector("html");
+        
+            // Declare a variable to hold the theme value
+            let theme = "luxury";
+        
+            // Check the initial theme and set the checkbox state
+            if (html.getAttribute("data-theme") === "retro") {
+                theme = "retro";
+                toggle.checked = true;
+            }
+        
+            // Listen for the change event on the toggle checkbox
+            toggle.addEventListener("change", function () {
+                // When the checkbox is changed, switch the data-theme attribute and update the theme variable
+                if (toggle.checked) {
+                    theme = "retro";
+                } else {
+                    theme = "luxury";
+                }
+                html.setAttribute("data-theme", theme);
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1 class="text-center text-3xl">Chennai</h1>
+        <br /><br /><br />
+        <div class="overflow-x-auto">
+            <table class="table table-xs">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Time</th>
+                        <th>Temperature 2m</th>
+                        <th>Apparent Temperature</th>
+                        <th>Surface Pressure</th>
+                        <th>Relative Humidity 2m</th>
+                        <th>Wind Speed 10m</th>
+                        <th>Precipitation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tbody>
+                                {% for row in chennai_data %}
+                                <tr>
+                                    <td>{{ row.id }}</td>
+                                    <td>{{ row.time }}</td>
+                                    <td>{{ row.temperature_2m }}</td>
+                                    <td>{{ row.apparent_temperature }}</td>
+                                    <td>{{ row.surface_pressure }}</td>
+                                    <td>{{ row.relative_humidity_2m }}</td>
+                                    <td>{{ row.wind_speed_10m }}</td>
+                                    <td>{{ row.precipitation }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>ID</th>
+                        <th>Time</th>
+                        <th>Temperature 2m</th>
+                        <th>Apparent Temperature</th>
+                        <th>Surface Pressure</th>
+                        <th>Relative Humidity 2m</th>
+                        <th>Wind Speed 10m</th>
+                        <th>Precipitation</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div style="margin-bottom: 200px;"></div>
+
+        <h1 class="text-center text-3xl">Madurai</h1>
+        <div class="overflow-x-auto">
+                <table class="table table-xs">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Time</th>
+                            <th>Temperature 2m</th>
+                            <th>Apparent Temperature</th>
+                            <th>Surface Pressure</th>
+                            <th>Relative Humidity 2m</th>
+                            <th>Wind Speed 10m</th>
+                            <th>Precipitation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tbody>
+                                    {% for row in madurai_data %}
+                                    <tr>
+                                        <td>{{ row.id }}</td>
+                                        <td>{{ row.time }}</td>
+                                        <td>{{ row.temperature_2m }}</td>
+                                        <td>{{ row.apparent_temperature }}</td>
+                                        <td>{{ row.surface_pressure }}</td>
+                                        <td>{{ row.relative_humidity_2m }}</td>
+                                        <td>{{ row.wind_speed_10m }}</td>
+                                        <td>{{ row.precipitation }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Time</th>
+                            <th>Temperature 2m</th>
+                            <th>Apparent Temperature</th>
+                            <th>Surface Pressure</th>
+                            <th>Relative Humidity 2m</th>
+                            <th>Wind Speed 10m</th>
+                            <th>Precipitation</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+    </body>
+</html>
