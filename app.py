@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+import numpy as np
 import pymysql
 import datetime
 
@@ -68,6 +69,7 @@ def weather_data(city):
 
     return jsonify(chart_data)
 
+
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -121,6 +123,35 @@ def meteorological_factors_data(city):
 @app.route("/meteorological-factors")
 def meteorological_factors_chart():
     return render_template("meteorological-factors.html")
+
+
+# Function to fetch temperature data for analysis
+def fetch_temperature_data(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT temperature_2m FROM {city}_weather WHERE HOUR(time) = 9"
+        )
+        return [row["temperature_2m"] for row in cursor.fetchall()]
+
+
+@app.route("/api/analysis-data/<city>")
+def analysis_data(city):
+    connection = get_connection()
+    temperatures = fetch_temperature_data(city, connection)
+    connection.close()
+
+    # Calculate mean, median, and standard deviation
+    mean_temp = round(np.mean(temperatures), 2)
+    median_temp = round(np.median(temperatures), 2)
+    std_dev = round(np.std(temperatures), 2)
+
+    return jsonify(
+        {
+            "meanTemp": mean_temp,
+            "medianTemp": median_temp,
+            "stdDev": std_dev,
+        }
+    )
 
 
 if __name__ == "__main__":
