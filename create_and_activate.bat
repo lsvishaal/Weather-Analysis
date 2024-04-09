@@ -1,3 +1,3 @@
 @echo off
-python -m venv venv
-call venv\Scripts\activate
+python -m venv veenv
+call veenv\Scripts\activate
