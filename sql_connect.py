@@ -7,8 +7,8 @@ config = {
     "user": "root",
     "password": "root",
     "host": "localhost",
-    "database": "weather_db",
-    "pool_name": "weather_db_pool",
+    "database": "weather",
+    "pool_name": "weather_pool",
     "pool_size": 5  # Adjust pool size as needed
 }
 

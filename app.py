@@ -53,6 +53,7 @@ def fetch_meteorological_factors_data(city, connection):
         return cursor.fetchall()
 
 
+
 @app.route("/api/weather-data/<city>")
 def weather_data(city):
     connection = get_connection()
@@ -174,7 +175,6 @@ def apparent_analysis_data(city):
     mean_app_temp = round(np.mean(apparent_temperatures), 2)
     median_app_temp = round(np.median(apparent_temperatures), 2)
     std_dev_app = round(np.std(apparent_temperatures), 2)
-
     return jsonify(
         {
             "meanAppTemp": mean_app_temp,
@@ -182,6 +182,107 @@ def apparent_analysis_data(city):
             "stdDevApp": std_dev_app,
         }
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# meteorological factors/ Surface data for analysis
+# Function to fetch surface pressure data for analysis
+def fetch_pressure_data_for_analysis(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT surface_pressure FROM {city}_weather WHERE HOUR(time) = 9"
+        )
+        return [row["surface_pressure"] for row in cursor.fetchall()]
+
+@app.route("/api/pressure-analysis-data/<city>")
+def pressure_analysis_data(city):
+    connection = get_connection()
+    pressures = fetch_pressure_data_for_analysis(city, connection)
+    connection.close()
+
+    # Calculate mean, median, and standard deviation
+    mean_pressure = round(np.mean(pressures), 2)
+    median_pressure = round(np.median(pressures), 2)
+    std_dev_pressure = round(np.std(pressures), 2)
+
+    return jsonify(
+        {
+            "meanPressure": mean_pressure,
+            "medianPressure": median_pressure,
+            "stdDevPressure": std_dev_pressure,
+        }
+    )
+
+# Function to fetch Relative Humidity data for analysis
+def fetch_relative_humidity_data_for_analysis(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT relative_humidity_2m FROM {city}_weather WHERE HOUR(time) = 9"
+        )
+        return [row["relative_humidity_2m"] for row in cursor.fetchall()]
+
+@app.route("/api/relative-humidity-analysis-data/<city>")
+def relative_humidity_analysis_data(city):
+    connection = get_connection()
+    relative_humidity = fetch_relative_humidity_data_for_analysis(city, connection)
+    connection.close()
+
+    # Calculate mean, median, and standard deviation
+    mean_relative_humidity = round(np.mean(relative_humidity), 2)
+    median_relative_humidity = round(np.median(relative_humidity), 2)
+    std_dev_relative_humidity = round(np.std(relative_humidity), 2)
+
+    return jsonify(
+        {
+            "meanRelativeHumidity": mean_relative_humidity,
+            "medianRelativeHumidity": median_relative_humidity,
+            "stdDevRelativeHumidity": std_dev_relative_humidity,
+        }
+    )
+
+
+# Function to fetch Wind Speed data for analysis
+def fetch_wind_speed_data_for_analysis(city, connection):
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f"SELECT wind_speed_10m FROM {city.lower()}_weather WHERE HOUR(time) = 9"
+        )
+        return [row["wind_speed_10m"] for row in cursor.fetchall()]
+
+@app.route("/api/wind-speed-analysis-data/<city>")
+def wind_speed_analysis_data(city):
+    connection = get_connection()
+    try:
+        wind_speeds = fetch_wind_speed_data_for_analysis(city, connection)
+        connection.close()
+
+        # Calculate mean, median, and standard deviation
+        mean_wind_speed = round(np.mean(wind_speeds), 2)
+        median_wind_speed = round(np.median(wind_speeds), 2)
+        std_dev_wind_speed = round(np.std(wind_speeds), 2)
+
+        return jsonify(
+            {
+                "meanWindSpeed": mean_wind_speed,
+                "medianWindSpeed": median_wind_speed,
+                "stdDevWindSpeed": std_dev_wind_speed,
+            }
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  # Return error response if something goes wrong
 
 
 
