@@ -10,7 +10,7 @@ app = Flask(__name__)
 DB_HOST = "127.0.0.1"  # Replace with your host
 DB_USER = "root"  # Replace with your database username
 DB_PASSWORD = "root"  # Replace with your database password
-DB_NAME = "weather_db"  # Replace with your database name
+DB_NAME = "weather"  # Replace with your database name
 
 
 # Function to establish database connection
