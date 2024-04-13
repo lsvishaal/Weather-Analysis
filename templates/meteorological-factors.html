@@ -37,77 +37,82 @@
   </head>
 
   <body>
-    <!-- NAVBAR -->
-    <div class="navbar bg-base-100">
-      <!-- Navbar Start -->
-      <div class="navbar-start">
-        <div class="dropdown">
-          <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h7"
-              />
-            </svg>
-          </div>
-          <ul
-            tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
-            <li><a href="/temperature">Temperature</a></li>
-            <li>
-              <a href="/temperature#apparentTemperatureChart"
-                >Apparent Temperature</a
+        <!-- NAVBAR -->
+        <div class="navbar bg-base-100 h-30">
+          <!-- Navbar Start -->
+          <div class="navbar-start">
+            <div class="dropdown">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                </svg>
+              </div>
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
               >
-            </li>
-            <hr style="border-color: palevioletred; border-width: 1px" />
-            <li>
-              <a href="/meteorological-factors">meteorological_factors</a>
-            </li>
-          </ul>
+                <li><a href="/temperature">Temperature</a></li>
+                <li><a href="/temperature#ref2">Apparent Temperature</a></li>
+                <hr style="border-color:palevioletred; border-width: 0.25px" />
+                <li>
+                  <a href="/meteorological-factors">meteorological_factors</a>
+                  <a href="http://127.0.0.1:5000/table">RAW_Tables</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Navbar Center -->
+
+          <div class="navbar-center">
+            <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+          </div>
+
+          <div class="navbar-end">
+            <label class="flex cursor-pointer gap-2">
+              <span class="label-text">luxury</span>
+              <input
+                type="checkbox"
+                value="luxury"
+                class="toggle theme-controller"
+              />
+              <span class="label-text">Retro</span>
+              
+            </label>
+          </div>
         </div>
-      </div>
-      <div>
-        <svg
-          id="favicon_chart"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="-2 -3 24 24"
-          width="28"
-          fill="#d08581"
-        >
-          <path
-            d="M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z"
-          ></path>
-        </svg>
-      </div>
-      <!-- Navbar Center -->
+        <!-- Navbar End -->
 
-      <div class="navbar-center">
-        <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
-      </div>
 
-      <div class="navbar-end">
-        <label class="flex cursor-pointer gap-2">
-          <span class="label-text">luxury</span>
-          <input
-            type="checkbox"
-            value="retro"
-            class="toggle theme-controller"
-          />
+      <script>
+              // Select the toggle checkbox and the html element
+        const toggle = document.querySelector(".toggle.theme-controller");
+        const html = document.querySelector("html");
 
-          <span class="label-text">retro</span>
-        </label>
-      </div>
-    </div>
-    <!-- Navbar End -->
+        // Declare a variable to hold the theme value
+        let theme = "luxury";
+
+        // Listen for the change event on the toggle checkbox
+        toggle.addEventListener("change", function () {
+          // When the checkbox is changed, switch the data-theme attribute and update the theme variable
+          if (theme === "luxury") {
+            theme = "retro";
+          } else {
+            theme = "luxury";
+          }
+          html.setAttribute("data-theme", theme);
+        });
+      </script>
 
     <!-- HERO-SECTION -->
 
@@ -394,14 +399,14 @@
   });
 </script>
 <hr style="border-color: golden; border-width: 1px" />
-
+<BR><BR>
 <!-- Explanation for Surface Pressure Analysis -->
 <div class="analysis-explanation mb-5 pl-9">
   <h3 class="text-xl font-">Surface Pressure Analysis Summary</h3>
-  <p>
+  <p class="text-l">
     The surface pressure analysis compares mean, median, and standard deviation of
     surface pressure between Chennai and Madurai. This data helps in understanding
-    the atmospheric pressure variations across these cities.
+    the atmospheric pressure variations across these cities. 
   </p>
 </div>
 
@@ -544,9 +549,9 @@
    <footer>
     <footer class="footer footer-center p-6 bg-base-200 text-base-content rounded">
       <nav>
-        <a class="link link-hover">About us</a>
-        <a class="link link-hover">Temperature</a>
-        <a class="link link-hover">Meteorological-factors</a>
+        <a class="link link-hover" href="/about" >About us</a>
+        <a class="link link-hover"href="/temperature">Temperature</a>
+        <a class="link link-hover" href="/meteorological-factors">Meteorological-factors</a>
         <a href="http://127.0.0.1:5000/table" class="link link-hover">RAW_Tables</a>
       </nav>
       <nav>

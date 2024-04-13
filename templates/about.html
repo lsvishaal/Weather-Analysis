@@ -6,6 +6,11 @@
     <title>Temperature Comparison</title>
 
     <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="./alpha.css"
+
+    <link
       rel="icon"
       type="image/svg+xml"
       href="data:image/svg+xml,<svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>"
@@ -24,10 +29,8 @@
         scroll-behavior: smooth;
       }
     </style>
-
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
-
     <!-- NAVBAR -->
     <div class="navbar bg-base-100 h-30">
       <!-- Navbar Start -->
@@ -55,9 +58,10 @@
           >
             <li><a href="/temperature">Temperature</a></li>
             <li><a href="/temperature#ref2">Apparent Temperature</a></li>
-            <hr style="border-color: palevioletred; border-width: 1px" />
+            <hr style="border-color:palevioletred; border-width: 0.25px" />
             <li>
               <a href="/meteorological-factors">meteorological_factors</a>
+              <a href="http://127.0.0.1:5000/table">RAW_Tables</a>
             </li>
           </ul>
         </div>
@@ -80,7 +84,9 @@
         </label>
       </div>
     </div>
+    <hr style="border-color:goldenrod; border-width: 0.25px" />
     <!-- Navbar End -->
+
 
     <script>
       // Select the toggle checkbox and the html element
@@ -101,7 +107,66 @@
         html.setAttribute("data-theme", theme);
       });
     </script>
-  </head>
+    </head>
 
-  <body></body>
+    <body>
+      <br><br>
+      <div>
+      <p class="text-4xl text-center font-bold mt-4">About the developers</p>
+      <br><br><br><br><br>
+      <div class="flex justify-center pl-9 pr-9">
+      <div class="card card-side bg-base-100 shadow-xl">
+      <figure><img src="https://daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg" alt="Movie" /></figure>
+      <div class="card-body">
+      <h2 class="card-title">Yashwanth SMD</h2>
+      <p></p>
+      <div class="card-actions justify-end">
+      <button class="btn btn-primary">Watch</button>
+      </div>
+      </div>
+      </div><br><br>
+
+      <div class="card card-side bg-base-100 shadow-xl ml-4">
+      <figure><img src="https://daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg" alt="Movie" /></figure>
+      <div class="card-body">
+        <h2 class="card-title">Vishaal LS</h2>
+        <p></p>
+        <div class="card-actions justify-end">
+        <button class="btn btn-primary">Watch</button>
+        </div>
+      </div>
+      </div><br><br>
+
+      <div class="card card-side bg-base-100 shadow-xl">
+      <figure><img src="https://daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg" alt="Movie" /></figure>
+      <div class="card-body">
+        <h2 class="card-title">Vijay Anand</h2>
+        <p></p>
+        <div class="card-actions justify-end">
+        <button class="btn btn-primary">Watch</button>
+        </div>
+      </div>
+      </div>
+      </div>
+
+      <br><br><br><br><br><br><br>
+
+      </body>
+
+  <footer>
+    <footer class="footer footer-center p-6 bg-base-200 text-base-content rounded">
+      <nav>
+        <a class="link link-hover" href="/about" >About us</a>
+        <a class="link link-hover"href="/temperature">Temperature</a>
+        <a class="link link-hover" href="/meteorological-factors">Meteorological-factors</a>
+        <a href="http://127.0.0.1:5000/table" class="link link-hover">RAW_Tables</a>
+      </nav>
+      <nav>
+        <div class="grid grid-flow-col gap-4"></div>
+      </nav>
+      <aside>
+        <p>Copyright © 2024 - All right reserved by Corporate Rats Industries Ltd</p>
+      </aside>
+    </footer>
+  </footer>
 </html>
