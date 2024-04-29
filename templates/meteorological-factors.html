@@ -1,567 +1,583 @@
 <div id="temperatureAnalysisOutput">
-<html lang="en" data-theme="luxury">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather Data </table>Analysis</title>
-
-    <style>
-      #redLineSeparator {
-        margin-top: 3rem;
-        margin-bottom: 3rem;
-        border-color: golden;
-        border-width: 1px;
-      }
-    </style>
-
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml, <svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>">
-
-
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com"></script>
-    <!-- TailwindCSS -->
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-      html {
-        scroll-behavior: smooth;
-      }
-    </style>
-
-    <!-- Add Chart.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
-  </head>
-
-  <body>
-        <!-- NAVBAR -->
-        <div class="navbar bg-base-100 h-30">
-          <!-- Navbar Start -->
-          <div class="navbar-start">
-            <div class="dropdown">
-              <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+  <html lang="en" data-theme="luxury">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Weather Data </table>Analysis</title>
+  
+      <style>
+        #redLineSeparator {
+          margin-top: 3rem;
+          margin-bottom: 3rem;
+          border-color: golden;
+          border-width: 1px;
+        }
+      </style>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml, <svg id='favicon_chart' xmlns='http://www.w3.org/2000/svg' viewBox='-2 -3 24 24' width='28' fill='%23d08581'><path d='M7.116 10.749L6 1.948l-1.116 8.8H1c-.552 0-1-.437-1-.976a.99.99 0 0 1 1-.978h2.116l.9-7.086C4.15.636 5.15-.124 6.245.008c.91.11 1.626.81 1.739 1.7l.899 7.086h1.974L12 16.04l1.142-7.245H19c.552 0 1 .438 1 .978s-.448.977-1 .977h-4.142l-.881 5.587a1.978 1.978 0 0 1-1.672 1.634c-1.092.165-2.113-.567-2.282-1.634l-.88-5.587H7.115z'></path></svg>">
+  
+  
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+      <!-- TailwindCSS -->
+  
+      <link
+        href="https://cdn.jsdelivr.net/npm/daisyui@4.9.0/dist/full.min.css"
+        rel="stylesheet"
+        type="text/css"
+      />
+      <script src="https://cdn.tailwindcss.com"></script>
+  
+      <style>
+        html {
+          scroll-behavior: smooth;
+        }
+      </style>
+  
+      <!-- Add Chart.js library -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.js"></script>
+    </head>
+  
+    <body>
+          <!-- NAVBAR -->
+          <div class="navbar bg-base-100 h-30">
+            <!-- Navbar Start -->
+            <div class="navbar-start">
+              <div class="dropdown">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h7"
+                    />
+                  </svg>
+                </div>
+                <ul
+                  tabindex="0"
+                  class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 6h16M4 12h16M4 18h7"
-                  />
-                </svg>
+                  <li><a href="/temperature">Temperature</a></li>
+                  <li><a href="/temperature#ref2">Apparent Temperature</a></li>
+                  <hr style="border-color:palevioletred; border-width: 0.25px" />
+                  <li>
+                    <a href="/meteorological-factors">meteorological_factors</a>
+                    <a href="http://127.0.0.1:5000/table">RAW_Tables</a>
+                  </li>
+                </ul>
               </div>
-              <ul
-                tabindex="0"
-                class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-              >
-                <li><a href="/temperature">Temperature</a></li>
-                <li><a href="/temperature#ref2">Apparent Temperature</a></li>
-                <hr style="border-color:palevioletred; border-width: 0.25px" />
-                <li>
-                  <a href="/meteorological-factors">meteorological_factors</a>
-                  <a href="http://127.0.0.1:5000/table">RAW_Tables</a>
-                </li>
-              </ul>
+            </div>
+            <!-- Navbar Center -->
+  
+            <div class="navbar-center">
+              <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+            </div>
+  
+            <div class="navbar-end">
+              <label class="flex cursor-pointer gap-2">
+                <span class="label-text">luxury</span>
+                <input
+                  type="checkbox"
+                  value="luxury"
+                  class="toggle theme-controller"
+                />
+                <span class="label-text">Retro</span>
+                
+              </label>
             </div>
           </div>
-          <!-- Navbar Center -->
-
-          <div class="navbar-center">
-            <a class="btn btn-ghost text-xl">MeteorAnalytica</a>
+          <!-- Navbar End -->
+  
+  
+        <script>
+                // Select the toggle checkbox and the html element
+          const toggle = document.querySelector(".toggle.theme-controller");
+          const html = document.querySelector("html");
+  
+          // Declare a variable to hold the theme value
+          let theme = "luxury";
+  
+          // Listen for the change event on the toggle checkbox
+          toggle.addEventListener("change", function () {
+            // When the checkbox is changed, switch the data-theme attribute and update the theme variable
+            if (theme === "luxury") {
+              theme = "retro";
+            } else {
+              theme = "luxury";
+            }
+            html.setAttribute("data-theme", theme);
+          });
+        </script>
+  
+      <!-- HERO-SECTION -->
+  
+      <div
+        class="hero min-h-screen"
+        style="
+          background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);
+        "
+      >
+        <div class="hero-overlay bg-opacity-60"></div>
+        <div class="hero-content text-center text-neutral-content">
+          <div class="max-w-md">
+            <h1 class="mb-5 text-4xl font-bold">Welcome to MeteorAnalytica</h1>
+            <p class="mb-5 text-justify">
+              Dive into the fascinating world of meteorological data. <br />
+              Explore charts and graphs that depict various weather factors such
+              as surface pressure, relative humidity, and wind speed. Our data is
+              sourced from multiple locations, providing a comprehensive view of
+              weather patterns.
+            </p>
+            <button
+              class="btn btn-primary"
+              onclick="location.href='#temperatureChart'"
+            >
+              Get Started
+            </button>
           </div>
-
-          <div class="navbar-end">
-            <label class="flex cursor-pointer gap-2">
-              <span class="label-text">luxury</span>
-              <input
-                type="checkbox"
-                value="luxury"
-                class="toggle theme-controller"
-              />
-              <span class="label-text">Retro</span>
-              
-            </label>
-          </div>
-        </div>
-        <!-- Navbar End -->
-
-
-      <script>
-              // Select the toggle checkbox and the html element
-        const toggle = document.querySelector(".toggle.theme-controller");
-        const html = document.querySelector("html");
-
-        // Declare a variable to hold the theme value
-        let theme = "luxury";
-
-        // Listen for the change event on the toggle checkbox
-        toggle.addEventListener("change", function () {
-          // When the checkbox is changed, switch the data-theme attribute and update the theme variable
-          if (theme === "luxury") {
-            theme = "retro";
-          } else {
-            theme = "luxury";
-          }
-          html.setAttribute("data-theme", theme);
-        });
-      </script>
-
-    <!-- HERO-SECTION -->
-
-    <div
-      class="hero min-h-screen"
-      style="
-        background-image: url(https://daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.jpg);
-      "
-    >
-      <div class="hero-overlay bg-opacity-60"></div>
-      <div class="hero-content text-center text-neutral-content">
-        <div class="max-w-md">
-          <h1 class="mb-5 text-4xl font-bold">Welcome to MeteorAnalytica</h1>
-          <p class="mb-5 text-justify">
-            Dive into the fascinating world of meteorological data. <br />
-            Explore charts and graphs that depict various weather factors such
-            as surface pressure, relative humidity, and wind speed. Our data is
-            sourced from multiple locations, providing a comprehensive view of
-            weather patterns.
-          </p>
-          <button
-            class="btn btn-primary"
-            onclick="location.href='#temperatureChart'"
-          >
-            Get Started
-          </button>
         </div>
       </div>
-    </div>
-    <!-- red line seperator -->
-    <hr style="border-color: golden; border-width: 1px" />
-    <br /><br />
+      <!-- red line seperator -->
+      <hr style="border-color: golden; border-width: 1px" />
+      <br /><br />
+  
+  
+  
+  
+      <!-- Surface Pressure Chart -->
+      <h1 class="mb-5 text-4xl font- pl-9">Surface Pressure</h1>
+      <div id="surfacePressureChart">
+        <canvas id="pressureChart" class="pr-7"></canvas>
+      </div>
+  
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Promise.all([
+                fetch("/api/surface-pressure/chennai").then((response) =>
+                    response.json()
+                ),
+                fetch("/api/surface-pressure/madurai").then((response) =>
+                    response.json()
+                ),
+            ])
+            .then(([chennaiData, maduraiData]) => {
+                const chartData = {
+                    labels: chennaiData.labels,
+                    datasets: [
+                        {
+                            label: "Chennai Surface Pressure (Pa)",
+                            data: chennaiData.pressures,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            borderColor: "rgba(255, 99, 132, 1)",
+                            borderWidth: 1,
+                        },
+                        {
+                            label: "Madurai Surface Pressure (Pa)",
+                            data: maduraiData.pressures,
+                            backgroundColor: "rgba(54, 162, 235, 0.2)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1,
+                        },
+                    ],
+                };
 
+                const ctx = document.getElementById("pressureChart").getContext("2d");
 
-
-
-    <!-- Surface Pressure Chart -->
-    <h1 class="mb-5 text-4xl font- pl-9">Surface Pressure</h1>
-    <div id="surfacePressureChart">
-      <canvas id="pressureChart" class="pr-7"></canvas>
-    </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Fetch data from SQL table
-        Promise.all([
-          fetch("/api/meteorological-factors-data/chennai").then((response) =>
-            response.json()
-          ),
-          fetch("/api/meteorological-factors-data/madurai").then((response) =>
-            response.json()
-          ),
-        ])
-          .then(([chennaiData, maduraiData]) => {
-            const chartData = {
-              labels: chennaiData.labels,
-              datasets: [
-                {
-                  label: "Chennai Surface Pressure (Pa)",
-                  data: chennaiData.surfacePressures,
-                  backgroundColor: "rgba(255, 99, 132, 0.2)",
-                  borderColor: "rgba(255, 99, 132, 1)",
-                  borderWidth: 1,
-                },
-                {
-                  label: "Madurai Surface Pressure (Pa)",
-                  data: maduraiData.surfacePressures,
-                  backgroundColor: "rgba(54, 162, 235, 0.2)",
-                  borderColor: "rgba(54, 162, 235, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            };
-
-            const ctx = document
-              .getElementById("pressureChart")
-              .getContext("2d");
-
-            new Chart(ctx, {
-              type: "line",
-              data: chartData,
-              options: {
-                responsive: true,
-                title: {
-                  display: true,
-                  text: "Surface Pressure (Pa)",
-                },
-              },
+                new Chart(ctx, {
+                    type: "line",
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        title: {
+                            display: true,
+                            text: "Surface Pressure (Pa)",
+                        },
+                    },
+                });
+            })
+            .catch((error) => {
+                console.error("Error fetching weather data:", error);
             });
-          })
-          .catch((error) => {
-            console.error("Error fetching weather data:", error);
-          });
-      });
+        });
     </script>
+
     <br>
 
-
-<!-- Surface Pressure Analysis Output Section -->
-<div class="analysis-section mb-5 text-4xl font- pl-9">
-  <h2 class="text-3xl font-">Surface Pressure Analysis Output</h2><br>
-  <table class="table w-full">
-    <thead>
-      <tr>
-        <th class="text-xl">City</th>
-        <th class="text-xl">Mean Surface Pressure (hPa)</th>
-        <th class="text-xl">Median Surface Pressure (hPa)</th>
-        <th class="text-xl">Standard Deviation</th>
-        <!-- Add more columns as needed -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Chennai</td>
-        <td id="chennai-mean-pressure">Loading...</td>
-        <td id="chennai-median-pressure">Loading...</td>
-        <td id="chennai-std-dev-pressure">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-      <tr>
-        <td>Madurai</td>
-        <td id="madurai-mean-pressure">Loading...</td>
-        <td id="madurai-median-pressure">Loading...</td>
-        <td id="madurai-std-dev-pressure">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-    </tbody>
-  </table>
+   <!-- Surface Pressure Analysis Output Section -->
+   <div class="analysis-section mb-5 text-4xl font-bold pl-9">
+    <h2 class="text-3xl font-bold">Surface Pressure Analysis Output</h2><br>
+    <table class="table w-full">
+        <thead>
+            <tr>
+                <th class="text-xl">City</th>
+                <th class="text-xl">Mean Surface Pressure (hPa)</th>
+                <th class="text-xl">Median Surface Pressure (hPa)</th>
+                <th class="text-xl">Standard Deviation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Chennai</td>
+                <td id="chennai-mean-pressure">Loading...</td>
+                <td id="chennai-median-pressure">Loading...</td>
+                <td id="chennai-std-dev-pressure">Loading...</td>
+            </tr>
+            <tr>
+                <td>Madurai</td>
+                <td id="madurai-mean-pressure">Loading...</td>
+                <td id="madurai-median-pressure">Loading...</td>
+                <td id="madurai-std-dev-pressure">Loading...</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Fetch surface pressure analysis data for Chennai
-    fetch("/api/pressure-analysis-data/chennai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("chennai-mean-pressure").textContent = data.meanPressure;
-        document.getElementById("chennai-median-pressure").textContent = data.medianPressure;
-        document.getElementById("chennai-std-dev-pressure").textContent = data.stdDevPressure;
-      })
-      .catch((error) => {
-        console.error("Error fetching surface pressure data for Chennai:", error);
-      });
+      function fetchPressureAnalysisData(city) {
+          fetch(`/api/surface-pressure-analysis-data/${city}`)
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+                  return response.json();
+              })
+              .then((data) => {
+                  document.getElementById(`${city}-mean-pressure`).textContent = data.meanPressure.toFixed(2);
+                  document.getElementById(`${city}-median-pressure`).textContent = data.medianPressure.toFixed(2);
+                  document.getElementById(`${city}-std-dev-pressure`).textContent = data.stdDevPressure.toFixed(2);
+              })
+              .catch((error) => {
+                  console.error(`Error fetching surface pressure data for ${city}:`, error);
+              });
+      }
 
-    // Fetch surface pressure analysis data for Madurai
-    fetch("/api/pressure-analysis-data/madurai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("madurai-mean-pressure").textContent = data.meanPressure;
-        document.getElementById("madurai-median-pressure").textContent = data.medianPressure;
-        document.getElementById("madurai-std-dev-pressure").textContent = data.stdDevPressure;
-      })
-      .catch((error) => {
-        console.error("Error fetching surface pressure data for Madurai:", error);
-      });
+      fetchPressureAnalysisData("chennai");
+      fetchPressureAnalysisData("madurai");
   });
 </script>
 
 
+  
+      <!-- red line seperator -->
+      <br /><br />
+      <hr style="border-color: golden; border-width: 1px" />
+      <br /><br />
 
+  
+      <!-- Relative Humidity Chart -->
+      <h1 class="mb-5 text-4xl font-bold pl-9">Relative Humidity</h1>
+      <div id="relativeHumidityChart">
+        <canvas id="humidityChart"></canvas>
+      </div>
 
-    <!-- red line seperator -->
-    <br /><br />
-    <hr style="border-color: golden; border-width: 1px" />
-    <br /><br />
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          // Function to fetch relative humidity data for a given city
+          function fetchRelativeHumidity(city) {
+            return fetch(`/api/relative-humidity/${city}`)
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+              })
+              .catch((error) => {
+                console.error(`Error fetching relative humidity data for ${city}:`, error);
+                return { labels: [], relativeHumidities: [] }; // Return empty data on error
+              });
+          }
 
-    <!-- Relative Humidity Chart -->
-    <h1 class="mb-5 text-4xl font- pl-9">Relative Humidity</h1>
-    <div id="relativeHumidityChart">
-      <canvas id="humidityChart"></canvas>
-    </div>
+          // Fetch relative humidity data for Chennai and Madurai
+          Promise.all([
+            fetchRelativeHumidity("chennai"),
+            fetchRelativeHumidity("madurai")
+          ])
+            .then(([chennaiData, maduraiData]) => {
+              const chartData = {
+                labels: chennaiData.labels, // Assuming labels are the same for both cities
+                datasets: [
+                  {
+                    label: "Chennai Relative Humidity (%)",
+                    data: chennaiData.relativeHumidities,
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1,
+                  },
+                  {
+                    label: "Madurai Relative Humidity (%)",
+                    data: maduraiData.relativeHumidities,
+                    backgroundColor: "rgba(54, 162, 235, 0.2)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1,
+                  },
+                ],
+              };
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Fetch data from SQL table
-        Promise.all([
-          fetch("/api/meteorological-factors-data/chennai").then((response) =>
-            response.json()
-          ),
-          fetch("/api/meteorological-factors-data/madurai").then((response) =>
-            response.json()
-          ),
-        ])
-          .then(([chennaiData, maduraiData]) => {
-            const chartData = {
-              labels: chennaiData.labels,
-              datasets: [
-                {
-                  label: "Chennai Relative Humidity (%)",
-                  data: chennaiData.relativeHumidities,
-                  backgroundColor: "rgba(255, 99, 132, 0.2)",
-                  borderColor: "rgba(255, 99, 132, 1)",
-                  borderWidth: 1,
+              const ctx = document.getElementById("humidityChart").getContext("2d");
+
+              new Chart(ctx, {
+                type: "line",
+                data: chartData,
+                options: {
+                  responsive: true,
+                  title: {
+                    display: true,
+                    text: "Relative Humidity (%)",
+                  },
                 },
-                {
-                  label: "Madurai Relative Humidity (%)",
-                  data: maduraiData.relativeHumidities,
-                  backgroundColor: "rgba(54, 162, 235, 0.2)",
-                  borderColor: "rgba(54, 162, 235, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            };
-
-            const ctx = document
-              .getElementById("humidityChart")
-              .getContext("2d");
-
-            new Chart(ctx, {
-              type: "line",
-              data: chartData,
-              options: {
-                responsive: true,
-                title: {
-                  display: true,
-                  text: "Relative Humidity (%)",
-                },
-              },
+              });
+            })
+            .catch((error) => {
+              console.error("Error creating humidity chart:", error);
             });
-          })
-          .catch((error) => {
-            console.error("Error fetching weather data:", error);
-          });
-      });
-    </script> <br>
-
-<!-- Humidity Analysis Output Section -->
-<div class="analysis-section mb-5 text-4xl font- pl-9">
-  <h2 class="text-3xl font-">Humidity Analysis Output</h2><br>
-  <table class="table w-full">
-    <thead>
-      <tr>
-        <th class="text-xl">City</th>
-        <th class="text-xl">Mean Humidity (%)</th>
-        <th class="text-xl">Median Humidity (%)</th>
-        <th class="text-xl">Standard Deviation</th>
-        <!-- Add more columns as needed -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Chennai</td>
-        <td id="chennai-mean-humidity">Loading...</td>
-        <td id="chennai-median-humidity">Loading...</td>
-        <td id="chennai-std-dev-humidity">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-      <tr>
-        <td>Madurai</td>
-        <td id="madurai-mean-humidity">Loading...</td>
-        <td id="madurai-median-humidity">Loading...</td>
-        <td id="madurai-std-dev-humidity">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-    </tbody>
-  </table>
+        });
+      </script>
+      <br>
+  
+  <!-- Humidity Analysis Output Section -->
+  <div class="analysis-section mb-5 text-4xl font- pl-9">
+    <h2 class="text-3xl font-">Humidity Analysis Output</h2><br>
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th class="text-xl">City</th>
+          <th class="text-xl">Mean Humidity (%)</th>
+          <th class="text-xl">Median Humidity (%)</th>
+          <th class="text-xl">Standard Deviation</th>
+          <!-- Add more columns as needed -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Chennai</td>
+          <td id="chennai-mean-humidity">Loading...</td>
+          <td id="chennai-median-humidity">Loading...</td>
+          <td id="chennai-std-dev-humidity">Loading...</td>
+          <!-- Add more cells as needed -->
+        </tr>
+        <tr>
+          <td>Madurai</td>
+          <td id="madurai-mean-humidity">Loading...</td>
+          <td id="madurai-median-humidity">Loading...</td>
+          <td id="madurai-std-dev-humidity">Loading...</td>
+          <!-- Add more cells as needed -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Fetch Humidity analysis data for Chennai
+      fetch("/api/relative-humidity-analysis-data/chennai")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("chennai-mean-humidity").textContent = data.meanRelativeHumidity;
+          document.getElementById("chennai-median-humidity").textContent = data.medianRelativeHumidity;
+          document.getElementById("chennai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
+        })
+        .catch((error) => {
+          console.error("Error fetching humidity data for Chennai:", error);
+        });
+  
+      // Fetch Humidity analysis data for Madurai
+      fetch("/api/relative-humidity-analysis-data/madurai")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("madurai-mean-humidity").textContent = data.meanRelativeHumidity;
+          document.getElementById("madurai-median-humidity").textContent = data.medianRelativeHumidity;
+          document.getElementById("madurai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
+        })
+        .catch((error) => {
+          console.error("Error fetching humidity data for Madurai:", error);
+        });
+    });
+  </script>
+  <hr style="border-color: golden; border-width: 1px" />
+  <BR><BR>
+  <!-- Explanation for Surface Pressure Analysis -->
+  <div class="analysis-explanation mb-5 pl-9">
+    <h3 class="text-xl font-">Surface Pressure Analysis Summary</h3>
+    <p class="text-l">
+      The surface pressure analysis compares mean, median, and standard deviation of
+      surface pressure between Chennai and Madurai. This data helps in understanding
+      the atmospheric pressure variations across these cities. 
+    </p>
+  </div>
+  
+  
+      <!-- red line seperator -->
+      <br /><br />
+      <hr style="border-color: golden; border-width: 1px" />
+      <br /><br />
+  
+<!-- Wind Speed Chart -->
+<h1 class="mb-5 text-4xl font pl-9">Wind Speed</h1>
+<div id="windSpeedChart">
+  <canvas id="windChart"></canvas>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Fetch Humidity analysis data for Chennai
-    fetch("/api/relative-humidity-analysis-data/chennai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("chennai-mean-humidity").textContent = data.meanRelativeHumidity;
-        document.getElementById("chennai-median-humidity").textContent = data.medianRelativeHumidity;
-        document.getElementById("chennai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
-      })
-      .catch((error) => {
-        console.error("Error fetching humidity data for Chennai:", error);
-      });
+    // Fetch data from SQL table
+    Promise.all([
+      fetch("/api/wind-speed/chennai").then((response) => response.json()),
+      fetch("/api/wind-speed/madurai").then((response) => response.json()),
+    ])
+      .then(([chennaiData, maduraiData]) => {
+        const chartData = {
+          labels: chennaiData.labels,
+          datasets: [
+            {
+              label: "Chennai Wind Speed (Km/h)",
+              data: chennaiData.wind_speeds, // Update key name to match API response
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+            {
+              label: "Madurai Wind Speed (Km/h)",
+              data: maduraiData.wind_speeds, // Update key name to match API response
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+          ],
+        };
 
-    // Fetch Humidity analysis data for Madurai
-    fetch("/api/relative-humidity-analysis-data/madurai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("madurai-mean-humidity").textContent = data.meanRelativeHumidity;
-        document.getElementById("madurai-median-humidity").textContent = data.medianRelativeHumidity;
-        document.getElementById("madurai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
-      })
-      .catch((error) => {
-        console.error("Error fetching humidity data for Madurai:", error);
-      });
-  });
-</script>
-<hr style="border-color: golden; border-width: 1px" />
-<BR><BR>
-<!-- Explanation for Surface Pressure Analysis -->
-<div class="analysis-explanation mb-5 pl-9">
-  <h3 class="text-xl font-">Surface Pressure Analysis Summary</h3>
-  <p class="text-l">
-    The surface pressure analysis compares mean, median, and standard deviation of
-    surface pressure between Chennai and Madurai. This data helps in understanding
-    the atmospheric pressure variations across these cities. 
-  </p>
-</div>
+        const ctx = document.getElementById("windChart").getContext("2d");
 
-
-    <!-- red line seperator -->
-    <br /><br />
-    <hr style="border-color: golden; border-width: 1px" />
-    <br /><br />
-
-    <!-- Wind Speed Chart -->
-    <h1 class="mb-5 text-4xl font pl-9">Wind Speed</h1>
-    <div id="windSpeedChart">
-      <canvas id="windChart"></canvas>
-    </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Fetch data from SQL table
-        Promise.all([
-          fetch("/api/meteorological-factors-data/chennai").then((response) =>
-            response.json()
-          ),
-          fetch("/api/meteorological-factors-data/madurai").then((response) =>
-            response.json()
-          ),
-        ])
-          .then(([chennaiData, maduraiData]) => {
-            const chartData = {
-              labels: chennaiData.labels,
-              datasets: [
-                {
-                  label: "Chennai Wind Speed (Km/h)",
-                  data: chennaiData.windSpeeds,
-                  backgroundColor: "rgba(255, 99, 132, 0.2)",
-                  borderColor: "rgba(255, 99, 132, 1)",
-                  borderWidth: 1,
-                },
-                {
-                  label: "Madurai Wind Speed (Km/h)",
-                  data: maduraiData.windSpeeds,
-                  backgroundColor: "rgba(54, 162, 235, 0.2)",
-                  borderColor: "rgba(54, 162, 235, 1)",
-                  borderWidth: 1,
-                },
-              ],
-            };
-
-            const ctx = document.getElementById("windChart").getContext("2d");
-
-            new Chart(ctx, {
-              type: "line",
-              data: chartData,
-              options: {
-                responsive: true,
-                title: {
+        new Chart(ctx, {
+          type: "line",
+          data: chartData,
+          options: {
+            responsive: true,
+            title: {
+              display: true,
+              text: "Wind Speed (Km/h)",
+            },
+            scales: {
+              yAxes: [{
+                scaleLabel: {
                   display: true,
-                  text: "Wind Speed (Km/h)",
-                },
-              },
-            });
-          })
-          .catch((error) => {
-            console.error("Error fetching weather data:", error);
-          });
-      });
-    </script>
-    <br><br>
-
-
-
-
-      
-
-<!-- Wind Speed Analysis Output Section -->
-<div class="analysis-section mb-5 text-4xl font- pl-9">
-  <h2 class="text-3xl font-">Wind Speed Analysis Output</h2><br>
-  <table class="table w-full">
-    <thead>
-      <tr>
-        <th class="text-xl">City</th>
-        <th class="text-xl">Mean Wind Speed (m/s)</th>
-        <th class="text-xl">Median Wind Speed (m/s)</th>
-        <th class="text-xl">Standard Deviation</th>
-        <!-- Add more columns as needed -->
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Chennai</td>
-        <td id="chennai-mean-wind-speed">Loading...</td>
-        <td id="chennai-median-wind-speed">Loading...</td>
-        <td id="chennai-std-dev-wind-speed">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-      <tr>
-        <td>Madurai</td>
-        <td id="madurai-mean-wind-speed">Loading...</td>
-        <td id="madurai-median-wind-speed">Loading...</td>
-        <td id="madurai-std-dev-wind-speed">Loading...</td>
-        <!-- Add more cells as needed -->
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Fetch Wind Speed analysis data for Chennai
-    fetch("/api/wind-speed-analysis-data/chennai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("chennai-mean-wind-speed").textContent = data.meanWindSpeed;
-        document.getElementById("chennai-median-wind-speed").textContent = data.medianWindSpeed;
-        document.getElementById("chennai-std-dev-wind-speed").textContent = data.stdDevWindSpeed;
+                  labelString: 'Wind Speed (Km/h)'
+                }
+              }]
+            }
+          },
+        });
       })
       .catch((error) => {
-        console.error("Error fetching wind speed data for Chennai:", error);
-      });
-
-    // Fetch Wind Speed analysis data for Madurai
-    fetch("/api/wind-speed-analysis-data/madurai")
-      .then((response) => response.json())
-      .then((data) => {
-        document.getElementById("madurai-mean-wind-speed").textContent = data.meanWindSpeed;
-        document.getElementById("madurai-median-wind-speed").textContent = data.medianWindSpeed;
-        document.getElementById("madurai-std-dev-wind-speed").textContent = data.stdDevWindSpeed;
-      })
-      .catch((error) => {
-        console.error("Error fetching wind speed data for Madurai:", error);
+        console.error("Error fetching weather data:", error);
       });
   });
 </script>
 
+      <br><br>
+  
+  
+  
+  
+        
+  
+  <!-- Wind Speed Analysis Output Section -->
+  <div class="analysis-section mb-5 text-4xl font- pl-9">
+    <h2 class="text-3xl font-">Wind Speed Analysis Output</h2><br>
+    <table class="table w-full">
+      <thead>
+        <tr>
+          <th class="text-xl">City</th>
+          <th class="text-xl">Mean Wind Speed (m/s)</th>
+          <th class="text-xl">Median Wind Speed (m/s)</th>
+          <th class="text-xl">Standard Deviation</th>
+          <!-- Add more columns as needed -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Chennai</td>
+          <td id="chennai-mean-wind-speed">Loading...</td>
+          <td id="chennai-median-wind-speed">Loading...</td>
+          <td id="chennai-std-dev-wind-speed">Loading...</td>
+          <!-- Add more cells as needed -->
+        </tr>
+        <tr>
+          <td>Madurai</td>
+          <td id="madurai-mean-wind-speed">Loading...</td>
+          <td id="madurai-median-wind-speed">Loading...</td>
+          <td id="madurai-std-dev-wind-speed">Loading...</td>
+          <!-- Add more cells as needed -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Fetch Wind Speed analysis data for Chennai
+  fetch("/api/wind-speed-analysis/chennai")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    // Update HTML elements with fetched data for Chennai
+    document.getElementById("chennai-mean-wind-speed").textContent = data.meanWindSpeed;
+    document.getElementById("chennai-median-wind-speed").textContent = data.medianWindSpeed;
+    document.getElementById("chennai-std-dev-wind-speed").textContent = data.standardDeviation;
+  })
+  .catch((error) => {
+    console.error(`Error fetching wind speed data for Chennai: ${error.message}`);
+    // Handle the error (e.g., display an error message on the UI)
+  });
 
 
+  // Fetch Wind Speed analysis data for Madurai
+  fetch("/api/wind-speed-analysis/madurai")
+    .then((response) => response.json())
+    .then((data) => {
+      document.getElementById("madurai-mean-wind-speed").textContent = data.meanWindSpeed;
+      document.getElementById("madurai-median-wind-speed").textContent = data.medianWindSpeed;
+      document.getElementById("madurai-std-dev-wind-speed").textContent = data.stdDevWindSpeed; // Update Standard Deviation
+    })
+    .catch((error) => {
+      console.error("Error fetching wind speed data for Madurai:", error);
+    });
+});
 
-  </body>
-
-  <br /><br /><br />
-   <footer>
-    <footer class="footer footer-center p-6 bg-base-200 text-base-content rounded">
-      <nav>
-        <a class="link link-hover" href="/about" >About us</a>
-        <a class="link link-hover"href="/temperature">Temperature</a>
-        <a class="link link-hover" href="/meteorological-factors">Meteorological-factors</a>
-        <a href="http://127.0.0.1:5000/table" class="link link-hover">RAW_Tables</a>
-      </nav>
-      <nav>
-        <div class="grid grid-flow-col gap-4"></div>
-      </nav>
-      <aside>
-        <p>Copyright © 2024 - All right reserved by Corporate Rats Industries Ltd</p>
-      </aside>
+  </script>
+  
+  
+  
+  
+    </body>
+  
+    <br /><br /><br />
+     <footer>
+      <footer class="footer footer-center p-6 bg-base-200 text-base-content rounded">
+        <nav>
+          <a class="link link-hover" href="/about" >About us</a>
+          <a class="link link-hover"href="/temperature">Temperature</a>
+          <a class="link link-hover" href="/meteorological-factors">Meteorological-factors</a>
+          <a href="http://127.0.0.1:5000/table" class="link link-hover">RAW_Tables</a>
+        </nav>
+        <nav>
+          <div class="grid grid-flow-col gap-4"></div>
+        </nav>
+        <aside>
+          <p>Copyright © 2024 - All right reserved by Corporate Rats Industries Ltd</p>
+        </aside>
+      </footer>
     </footer>
-  </footer>
-</html>
+  </html>

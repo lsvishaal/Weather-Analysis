@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\lsvis\OneDrive\Everything\Documents\Code\Weather-Analysis\veenv
+set VIRTUAL_ENV=C:\Users\Atomic\Documents\Code\Weather-Analysis\veenv
 
 if not defined PROMPT set PROMPT=$P$G
 

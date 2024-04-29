@@ -1,308 +1,408 @@
 from flask import Flask, render_template, jsonify
-from datetime import datetime
-import numpy as np
-import pymysql
-import datetime
+import sqlite3
+import statistics
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
-# Define database connection parameters
-DB_HOST = "127.0.0.1"  # Replace with your host
-DB_USER = "root"  # Replace with your database username
-DB_PASSWORD = "root"  # Replace with your database password
-DB_NAME = "weather"  # Replace with your database name
+# SQLite database file path
+DB_FILE = 'weather.db'
 
-
-# Function to establish database connection
 def get_connection():
-    connection = pymysql.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        db=DB_NAME,
-        cursorclass=pymysql.cursors.DictCursor,
-    )
-    return connection
+    return sqlite3.connect(DB_FILE)
+
+def fetch_data(query):
+    try:
+        connection = get_connection()  # Assuming get_connection() returns a valid database connection
+        cursor = connection.cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()
+        connection.close()
+        return data
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error executing query: {query}")
+        print(f"Error details: {str(e)}")
+        # If needed, log the full traceback for detailed debugging
+        # import traceback
+        # traceback.print_exc()
+        return None
 
 
-# Function to fetch weather data
-def fetch_weather_data(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT * FROM {city}_weather WHERE HOUR(time) = 9")
-        return cursor.fetchall()
-
-
-# Function to fetch apparent temperature data
-def fetch_apparent_temp_data(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT time, apparent_temperature FROM {city}_weather WHERE HOUR(time) = 9"
-        )
-        return cursor.fetchall()
-
-
-# Function to fetch meteorological factors data
-def fetch_meteorological_factors_data(city, connection):
-    with connection.cursor() as cursor:
-        if city.lower() not in ["chennai", "madurai"]:
-            raise ValueError(f"Invalid city: {city}")
-
-        cursor.execute(
-            f"SELECT time, surface_pressure, relative_humidity_2m as relative_humidity, wind_speed_10m as wind_speed FROM {city.lower()}_weather WHERE HOUR(time) = 9"
-        )
-        return cursor.fetchall()
-
-
-
-@app.route("/api/weather-data/<city>")
-def weather_data(city):
-    connection = get_connection()
-    city_data = fetch_weather_data(city, connection)
-    connection.close()
-
-    # Extract labels and temperatures from city_data
-    labels = [data["time"].strftime("%Y-%m-%d %H:%M:%S") for data in city_data]
-    temperatures = [data["temperature_2m"] for data in city_data]
-
-    chart_data = {
-        "labels": labels,
-        "temperatures": temperatures,
-    }
-
-    return jsonify(chart_data)
-
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-
-@app.route("/temperature")
-def weather_chart():
+@app.route("/")
+def home():
     return render_template("temperature.html")
+
+@app.route("/api/temperature/<city>")
+def fetch_temperature_data(city):
+    try:
+        query = f"SELECT time, temperature_2m FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        data = fetch_data(query)
+
+        if not data:
+            return jsonify({"error": f"No temperature data found for {city}"}), 404
+
+        labels = [row[0] for row in data]
+        temperatures = [row[1] for row in data]
+
+        response = {
+            "labels": labels,
+            "temperatures": temperatures
+        }
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/apparent-weather-data/<city>")
 def apparent_weather_data(city):
-    connection = get_connection()
-    city_data = fetch_apparent_temp_data(city, connection)
-    connection.close()
+    try:
+        # Construct the SQL query to fetch apparent temperature data for the specified city at 9 AM
+        query = f"SELECT time, apparent_temperature FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        
+        # Fetch data from the database using the defined query
+        data = fetch_data(query)
 
-    # Extract labels and apparent temperatures from city_data
-    labels = [data["time"].strftime("%Y-%m-%d %H:%M:%S") for data in city_data]
-    apparent_temperatures = [data["apparent_temperature"] for data in city_data]
+        # Handle case where no data is returned
+        if not data:
+            return jsonify({"error": f"No apparent temperature data found for {city.capitalize()} at 9 AM"}), 404
 
-    chart_data = {
-        "labels": labels,
-        "apparentTemperatures": apparent_temperatures,
-    }
-
-    return jsonify(chart_data)
-
-
-@app.route("/api/meteorological-factors-data/<city>")
-def meteorological_factors_data(city):
-    connection = get_connection()
-    city_data = fetch_meteorological_factors_data(city, connection)
-    connection.close()
-
-    # Extract labels and meteorological factors from city_data
-    labels = [data["time"].strftime("%Y-%m-%d %H:%M:%S") for data in city_data]
-    surface_pressures = [data["surface_pressure"] for data in city_data]
-    relative_humidities = [data["relative_humidity"] for data in city_data]
-    wind_speeds = [data["wind_speed"] for data in city_data]
-
-    chart_data = {
-        "labels": labels,
-        "surfacePressures": surface_pressures,
-        "relativeHumidities": relative_humidities,
-        "windSpeeds": wind_speeds,
-    }
-
-    return jsonify(chart_data)
-
-
-@app.route("/meteorological-factors")
-def meteorological_factors_chart():
-    return render_template("meteorological-factors.html")
-
-
-# Function to fetch temperature data for analysis
-def fetch_temperature_data(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT temperature_2m FROM {city}_weather WHERE HOUR(time) = 9"
-        )
-        return [row["temperature_2m"] for row in cursor.fetchall()]
-
-
-@app.route("/api/analysis-data/<city>")
-def analysis_data(city):
-    connection = get_connection()
-    temperatures = fetch_temperature_data(city, connection)
-    connection.close()
-
-    # Calculate mean, median, and standard deviation
-    mean_temp = round(np.mean(temperatures), 2)
-    median_temp = round(np.median(temperatures), 2)
-    std_dev = round(np.std(temperatures), 2)
-
-    return jsonify(
-        {
-            "meanTemp": mean_temp,
-            "medianTemp": median_temp,
-            "stdDev": std_dev,
+        # Prepare the response data in JSON format
+        response = {
+            "city": city.capitalize(),
+            "data": [{"time": row[0], "apparent_temperature": row[1]} for row in data]
         }
-    )
 
+        # Return a JSON response with fetched data
+        return jsonify(response), 200
 
-# Function to fetch apparent temperature data for analysis
-def fetch_apparent_temp_data_for_analysis(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT apparent_temperature FROM {city}_weather WHERE HOUR(time) = 9"
-        )
-        return [row["apparent_temperature"] for row in cursor.fetchall()]
+    except Exception as e:
+        # Handle any unexpected exceptions and return an error response
+        return jsonify({"error": str(e)}), 500
 
-
-@app.route("/api/apparent-analysis-data/<city>")
-def apparent_analysis_data(city):
-    connection = get_connection()
-    apparent_temperatures = fetch_apparent_temp_data_for_analysis(city, connection)
-    connection.close()
-
-    # Calculate mean, median, and standard deviation
-    mean_app_temp = round(np.mean(apparent_temperatures), 2)
-    median_app_temp = round(np.median(apparent_temperatures), 2)
-    std_dev_app = round(np.std(apparent_temperatures), 2)
-    return jsonify(
-        {
-            "meanAppTemp": mean_app_temp,
-            "medianAppTemp": median_app_temp,
-            "stdDevApp": std_dev_app,
+    
+@app.route("/api/temperature-analysis/<city>")
+def temperature_analysis(city):
+    try:
+        # Fetch temperature analysis data for the specified city
+        # Replace this with your actual logic to fetch analysis data from the database
+        # Example response:
+        analysis_data = {
+            "meanTemperature": 28.5,
+            "medianTemperature": 29.0,
+            "standardDeviation": 2.1
         }
-    )
+        return jsonify(analysis_data)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+from flask import jsonify
+
+@app.route("/api/apparent-temperature-analysis/<city>")
+def apparent_temperature_analysis(city):
+    try:
+        # Construct the SQL query to fetch apparent temperature data for the specified city
+        query = f"SELECT apparent_temperature FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+
+        # Fetch apparent temperature data from the database using your fetch_data function
+        data = fetch_data(query)
+
+        if not data:
+            return jsonify({"error": f"No apparent temperature data found for {city.capitalize()} at 9 AM"}), 404
+
+        # Extract apparent temperatures from the fetched data
+        apparent_temperatures = [float(row[0]) for row in data]  # Convert to float
+
+        # Calculate mean, median, and standard deviation of apparent temperatures
+        mean_apparent_temp = statistics.mean(apparent_temperatures)
+        median_apparent_temp = statistics.median(apparent_temperatures)
+        std_deviation = statistics.stdev(apparent_temperatures)
+
+        # Prepare the analysis data
+        analysis_data = {
+            "meanApparentTemperature": mean_apparent_temp,
+            "medianApparentTemperature": median_apparent_temp,
+            "standardDeviation": std_deviation
+        }
+
+        # Return the analysis data as a JSON response
+        return jsonify(analysis_data), 200
+
+    except Exception as e:
+        # Handle any unexpected exceptions and return an error response
+        return jsonify({"error": str(e)}), 500
 
 
 
 
+@app.route("/api/surface-pressure/<city>")
+def surface_pressure_data(city):
+    try:
+        query = f"SELECT time, surface_pressure FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        data = fetch_data(query)
+
+        if not data:
+            return jsonify({"error": f"No surface pressure data found for {city.capitalize()} at 9 AM"}), 404
+
+        labels = [entry[0] for entry in data]
+        pressures = [entry[1] for entry in data]
+
+        response = {
+            "city": city.capitalize(),
+            "labels": labels,
+            "pressures": pressures
+        }
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route("/api/surface-pressure-analysis-data/<city>")
+
+def sanitize(input_string):
+    import re
+    return re.sub(r'[^a-zA-Z0-9]', '', input_string)
 
 
+import statistics
+from flask import jsonify
 
-
-
-
-
-
-
-
-
-
-# meteorological factors/ Surface data for analysis
-# Function to fetch surface pressure data for analysis
-def fetch_pressure_data_for_analysis(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT surface_pressure FROM {city}_weather WHERE HOUR(time) = 9"
-        )
-        return [row["surface_pressure"] for row in cursor.fetchall()]
-
-@app.route("/api/pressure-analysis-data/<city>")
 def pressure_analysis_data(city):
-    connection = get_connection()
-    pressures = fetch_pressure_data_for_analysis(city, connection)
-    connection.close()
+    try:
+        print(f"Fetching surface pressure analysis data for {city}...")
 
-    # Calculate mean, median, and standard deviation
-    mean_pressure = round(np.mean(pressures), 2)
-    median_pressure = round(np.median(pressures), 2)
-    std_dev_pressure = round(np.std(pressures), 2)
+        # Ensure the city parameter is safe to use in the SQL query (sanitize if necessary)
+        normalized_city = sanitize(city)
 
-    return jsonify(
-        {
+        # Construct the SQL query to calculate mean surface pressure
+        query = f"SELECT surface_pressure FROM {normalized_city}_weather"
+
+        print("Executing SQL query:", query)
+
+        # Fetch surface pressure data from the database
+        surface_pressures = fetch_surface_pressures(query)
+
+        # Check if any data was returned
+        if not surface_pressures:
+            print(f"No surface pressure data found for {city.capitalize()}")
+            return jsonify({"error": f"No surface pressure data found for {city.capitalize()}"}), 404
+
+        # Calculate mean, median, and standard deviation of surface pressures
+        mean_pressure = statistics.mean(surface_pressures)
+        median_pressure = statistics.median(surface_pressures)
+        std_dev_pressure = statistics.stdev(surface_pressures) if len(surface_pressures) > 1 else 0
+
+        # Round standard deviation to 2 decimal places
+        std_dev_pressure = round(std_dev_pressure, 2)
+
+        # Prepare response JSON
+        result = {
             "meanPressure": mean_pressure,
             "medianPressure": median_pressure,
-            "stdDevPressure": std_dev_pressure,
+            "stdDevPressure": std_dev_pressure
         }
-    )
 
-# Function to fetch Relative Humidity data for analysis
-def fetch_relative_humidity_data_for_analysis(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT relative_humidity_2m FROM {city}_weather WHERE HOUR(time) = 9"
-        )
-        return [row["relative_humidity_2m"] for row in cursor.fetchall()]
+        # Return successful response
+        return jsonify(result), 200
 
-@app.route("/api/relative-humidity-analysis-data/<city>")
-def relative_humidity_analysis_data(city):
-    connection = get_connection()
-    relative_humidity = fetch_relative_humidity_data_for_analysis(city, connection)
-    connection.close()
-
-    # Calculate mean, median, and standard deviation
-    mean_relative_humidity = round(np.mean(relative_humidity), 2)
-    median_relative_humidity = round(np.median(relative_humidity), 2)
-    std_dev_relative_humidity = round(np.std(relative_humidity), 2)
-
-    return jsonify(
-        {
-            "meanRelativeHumidity": mean_relative_humidity,
-            "medianRelativeHumidity": median_relative_humidity,
-            "stdDevRelativeHumidity": std_dev_relative_humidity,
-        }
-    )
-
-
-# Function to fetch Wind Speed data for analysis
-def fetch_wind_speed_data_for_analysis(city, connection):
-    with connection.cursor() as cursor:
-        cursor.execute(
-            f"SELECT wind_speed_10m FROM {city.lower()}_weather WHERE HOUR(time) = 9"
-        )
-        return [row["wind_speed_10m"] for row in cursor.fetchall()]
-
-@app.route("/api/wind-speed-analysis-data/<city>")
-def wind_speed_analysis_data(city):
-    connection = get_connection()
-    try:
-        wind_speeds = fetch_wind_speed_data_for_analysis(city, connection)
-        connection.close()
-
-        # Calculate mean, median, and standard deviation
-        mean_wind_speed = round(np.mean(wind_speeds), 2)
-        median_wind_speed = round(np.median(wind_speeds), 2)
-        std_dev_wind_speed = round(np.std(wind_speeds), 2)
-
-        return jsonify(
-            {
-                "meanWindSpeed": mean_wind_speed,
-                "medianWindSpeed": median_wind_speed,
-                "stdDevWindSpeed": std_dev_wind_speed,
-            }
-        )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500  # Return error response if something goes wrong
+        # Log the error for debugging purposes
+        print(f"Error fetching pressure analysis data for {city}: {str(e)}")
+        # Return error response
+        return jsonify({"error": "Internal server error"}), 500
+
+def fetch_surface_pressures(query):
+    try:
+        connection = get_connection()  # Assuming get_connection() function is implemented
+        cursor = connection.cursor()
+        cursor.execute(query)
+        data = [row[0] for row in cursor.fetchall()]  # Extracting surface pressures from fetched data
+        connection.close()
+        return data
+    except Exception as e:
+        print(f"Error fetching surface pressures: {str(e)}")
+        return []  # Return empty list if there's an error
+
+def sanitize(city):
+    # Perform any necessary sanitation or validation of the city name here
+    # Example: Convert to lowercase and remove any unwanted characters
+    return city.lower().strip().replace(" ", "_")
 
 
 
+@app.route("/api/relative-humidity/<city>")
+def relative_humidity_data(city):
+    try:
+        # Construct the SQL query to fetch relative humidity data for the specified city at 9 AM
+        query = f"SELECT time, relative_humidity_2m FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        data = fetch_data(query)
 
-@app.route("/table")
-def table():
-    connection = get_connection()
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM chennai_weather WHERE HOUR(time) = 9")
-        chennai_data = cursor.fetchall()
-        for row in chennai_data:
-            row['time'] = row['time'].strftime('%Y-%m-%d')
+        if not data:
+            return jsonify({"error": f"No relative humidity data found for {city.capitalize()} at 9 AM"}), 404
 
-        cursor.execute("SELECT * FROM madurai_weather WHERE HOUR(time) = 9")
-        madurai_data = cursor.fetchall()
-        for row in madurai_data:
-            row['time'] = row['time'].strftime('%Y-%m-%d')
-    connection.close()
-    return render_template("Table.html", chennai_data=chennai_data, madurai_data=madurai_data)
+        labels = [entry[0] for entry in data]
+        humidities = [entry[1] for entry in data]
 
+        response = {
+            "city": city.capitalize(),
+            "labels": labels,
+            "relativeHumidities": humidities
+        }
+
+        return jsonify(response)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+from flask import jsonify
+import statistics
+
+def pressure_analysis_data(city):
+    try:
+        print(f"Fetching surface pressure analysis data for {city}...")
+
+        # Ensure the city parameter is safe to use in the SQL query (sanitize if necessary)
+        normalized_city = sanitize(city)
+
+        # Construct the SQL query to calculate mean surface pressure
+        query = f"SELECT surface_pressure FROM {normalized_city}_weather"
+
+        print("Executing SQL query:", query)
+
+        # Fetch surface pressure data from the database
+        surface_pressures = fetch_surface_pressures(query)
+
+        # Check if any data was returned
+        if not surface_pressures:
+            print(f"No surface pressure data found for {city.capitalize()}")
+            return jsonify({"error": f"No surface pressure data found for {city.capitalize()}"}), 404
+
+        # Calculate mean, median, and standard deviation of surface pressures
+        mean_pressure = statistics.mean(surface_pressures)
+        median_pressure = statistics.median(surface_pressures)
+        std_dev_pressure = statistics.stdev(surface_pressures) if len(surface_pressures) > 1 else 0
+
+        # Round standard deviation to 2 decimal places
+        std_dev_pressure = round(std_dev_pressure, 2)
+
+        # Prepare response JSON
+        result = {
+            "meanPressure": mean_pressure,
+            "medianPressure": median_pressure,
+            "stdDevPressure": std_dev_pressure
+        }
+
+        # Return successful response
+        return jsonify(result), 200
+
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error fetching pressure analysis data for {city}: {str(e)}")
+        # Return error response
+        return jsonify({"error": "Internal server error"}), 500
+
+def fetch_surface_pressures(query):
+    try:
+        # Assume get_connection() is implemented to establish database connection
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(query)
+        data = [row[0] for row in cursor.fetchall()]  # Extract surface pressures from fetched data
+        connection.close()
+        return data
+    except Exception as e:
+        print(f"Error fetching surface pressures: {str(e)}")
+        return []  # Return empty list if there's an error
+
+def sanitize(city):
+    # Implement any necessary sanitation or validation of the city name here
+    # Example: Convert to lowercase and replace spaces with underscores
+    return city.lower().replace(" ", "_")
+
+@app.route("/api/wind-speed/<city>")
+def wind_speed_data(city):
+    try:
+        # Construct SQL query to fetch wind speed data for the specified city at 9 AM
+        query = f"SELECT time, wind_speed_10m FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        
+        # Fetch wind speed data from the database
+        data = fetch_data(query)
+        
+        # Handle case where no data is returned
+        if not data:
+            return jsonify({"error": f"No wind speed data found for {city.capitalize()} at 9 AM"}), 404
+        
+        # Extract labels (time) and wind speeds from the fetched data
+        labels = [entry[0] for entry in data]
+        wind_speeds = [entry[1] for entry in data]
+        
+        # Prepare response JSON
+        response = {
+            "city": city.capitalize(),
+            "labels": labels,
+            "wind_speeds": wind_speeds
+        }
+        
+        return jsonify(response), 200
+    
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error fetching wind speed data for {city}: {str(e)}")
+        # Return error response
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route("/api/wind-speed-analysis/<city>")
+def wind_speed_analysis(city):
+    try:
+        # Construct the SQL query to fetch wind speed data for the specified city
+        query = f"SELECT wind_speed_10m FROM {city.lower()}_weather WHERE strftime('%H', time) = '09'"
+
+        # Fetch wind speed data from the database using the fetch_data function
+        data = fetch_data(query)
+
+        # Handle case where no data is returned
+        if not data:
+            return jsonify({"error": f"No wind speed data found for {city.capitalize()} at 9 AM"}), 404
+
+        # Extract wind speeds from the fetched data
+        wind_speeds = [float(row[0]) for row in data]  # Convert to float
+
+        # Calculate mean, median, and standard deviation of wind speeds
+        mean_wind_speed = statistics.mean(wind_speeds)
+        median_wind_speed = statistics.median(wind_speeds)
+        std_deviation = statistics.stdev(wind_speeds)
+
+        # Prepare the analysis data
+        analysis_data = {
+            "meanWindSpeed": mean_wind_speed,
+            "medianWindSpeed": median_wind_speed,
+            "standardDeviation": std_deviation
+        }
+
+        # Return the analysis data as a JSON response
+        return jsonify(analysis_data), 200
+
+    except Exception as e:
+        # Handle any unexpected exceptions and return an error response
+        return jsonify({"error": str(e)}), 500
+    
+
+
+# Route to render the temperature chart page
+@app.route("/temperature")
+def weather_chart():
+    return render_template("temperature.html")
+
+# Route to render the meteorological factors analysis page
+@app.route("/meteorological-factors")
+def meteorological_factors():
+    return render_template("meteorological-factors.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

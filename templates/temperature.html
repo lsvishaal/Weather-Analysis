@@ -135,94 +135,82 @@
       <hr style="border-color:black; border-width: 2px;"> <br> <br>
           
 
-          <!-- Temperature CHART start-->
-              <h1 class="mb-5 text-4xl font- pl-9" id="ref1alpha">Temperature</h1>
-              <div id="temperatureChart">
-                <div class=" pr-7">
-                  <canvas id="weatherChart"></canvas>
-                </div>
-              </div>
+    <!-- Temperature CHART start-->
+    <h1 class="mb-5 text-4xl font-bold pl-9" id="ref1alpha">Temperature</h1>
+    <div id="temperatureChart">
+        <div class="pr-7">
+            <canvas id="weatherChart"></canvas>
+        </div>
+    </div>
 
-        <script>
-          document.addEventListener("DOMContentLoaded", function () {
-            // Fetch data from SQL table
-            Promise.all([
-              fetch("/api/weather-data/chennai").then((response) =>
-                response.json()
-              ),
-              fetch("/api/weather-data/madurai").then((response) =>
-                response.json()
-              ),
-            ])
-              .then(([chennaiData, maduraiData]) => {
-                const chartData = {
-                  labels: chennaiData.labels,
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          Promise.all([
+              fetch("/api/temperature/chennai").then(response => response.json()),
+              fetch("/api/temperature/madurai").then(response => response.json())
+          ])
+          .then(([chennaiData, maduraiData]) => {
+              console.log("Chennai Data:", chennaiData);
+              console.log("Madurai Data:", maduraiData);
+      
+              const chartData = {
+                  labels: chennaiData.labels, // Assuming labels are the same for both cities
                   datasets: [
-                    {
-                      label: "Chennai (°C)",
-                      data: chennaiData.temperatures,
-                      backgroundColor: "rgba(255, 99, 132, 0.2)",
-                      borderColor: "rgba(255, 99, 132, 1)",
-                      borderWidth: 1,
-                      yAxisID: "y",
-                    },
-                    {
-                      label: "Madurai (°C)",
-                      data: maduraiData.temperatures,
-                      backgroundColor: "rgba(54, 162, 235, 0.2)",
-                      borderColor: "rgba(54, 162, 235, 1)",
-                      borderWidth: 1,
-                      yAxisID: "y1",
-                    },
+                      {
+                          label: "Chennai (°C)",
+                          data: chennaiData.temperatures,
+                          backgroundColor: "rgba(255, 99, 132, 0.2)",
+                          borderColor: "rgba(255, 99, 132, 1)",
+                          borderWidth: 1,
+                          yAxisID: "y",
+                      },
+                      {
+                          label: "Madurai (°C)",
+                          data: maduraiData.temperatures,
+                          backgroundColor: "rgba(54, 162, 235, 0.2)",
+                          borderColor: "rgba(54, 162, 235, 1)",
+                          borderWidth: 1,
+                          yAxisID: "y",
+                      },
                   ],
-                };
-
-                const ctx = document
-                  .getElementById("weatherChart")
-                  .getContext("2d");
-
-                new Chart(ctx, {
+              };
+      
+              const ctx = document.getElementById("weatherChart").getContext("2d");
+      
+              new Chart(ctx, {
                   type: "line",
                   data: chartData,
                   options: {
-                    responsive: true,
-                    interaction: {
-                      mode: "index",
-                      intersect: false,
-                    },
-                    stacked: false,
-                    plugins: {
-                      title: {
-                        display: true,
-                        text: "Temperature (°C)", // Added °C here
+                      responsive: true,
+                      interaction: {
+                          mode: "index",
+                          intersect: false,
                       },
-                    },
-                    scales: {
-                      y: {
-                        type: "linear",
-                        display: true,
-                        position: "left",
+                      stacked: false,
+                      plugins: {
+                          title: {
+                              display: true,
+                              text: "Temperature Comparison (°C)",
+                          },
                       },
-                      y1: {
-                        type: "linear",
-                        display: true,
-                        position: "right",
-                        grid: {
-                          drawOnChartArea: false,
-                        },
+                      scales: {
+                          y: {
+                              type: "linear",
+                              display: true,
+                              position: "left",
+                          },
                       },
-                    },
                   },
-                });
-              })
-              .catch((error) => {
-                console.error("Error fetching weather data:", error);
               });
+          })
+          .catch(error => {
+              console.error("Error fetching or processing temperature data:", error);
           });
-
-
-        </script>
-        <!-- Temperature CHART END-->
+      });
+      </script>
+      
+    <!-- Temperature CHART END-->
+    
     <!-- red line seperator -->
       <br><br>
       <hr style="border-color:black; border-width: 1px;">
@@ -261,6 +249,33 @@
   </table>
 </div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      Promise.all([
+          fetch("/api/temperature-analysis/chennai").then(response => response.json()),
+          fetch("/api/temperature-analysis/madurai").then(response => response.json())
+      ])
+      .then(([chennaiAnalysis, maduraiAnalysis]) => {
+          console.log("Chennai Analysis:", chennaiAnalysis);
+          console.log("Madurai Analysis:", maduraiAnalysis);
+  
+          // Update Chennai table cells
+          document.getElementById("chennai-mean-temp").textContent = chennaiAnalysis.meanTemperature;
+          document.getElementById("chennai-median-temp").textContent = chennaiAnalysis.medianTemperature;
+          document.getElementById("chennai-std-dev").textContent = chennaiAnalysis.standardDeviation;
+  
+          // Update Madurai table cells
+          document.getElementById("madurai-mean-temp").textContent = maduraiAnalysis.meanTemperature;
+          document.getElementById("madurai-median-temp").textContent = maduraiAnalysis.medianTemperature;
+          document.getElementById("madurai-std-dev").textContent = maduraiAnalysis.standardDeviation;
+      })
+      .catch(error => {
+          console.error("Error fetching or processing temperature analysis data:", error);
+      });
+  });
+  </script>
+  
+
 <!-- red line seperator -->
 <br><br>
 <hr style="border-color:black; border-width: 3px;">
@@ -269,200 +284,188 @@
     <!-- dynamic temperature sample -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-      // Fetch data from server
-      Promise.all([
-        fetch("/api/analysis-data/chennai").then((response) => response.json()),
-        fetch("/api/analysis-data/madurai").then((response) => response.json()),
-      ])
-        .then(([chennaiData, maduraiData]) => {
-          // Update table with fetched data
-          document.getElementById("chennai-mean-temp").textContent = chennaiData.meanTemp;
-          document.getElementById("chennai-median-temp").textContent = chennaiData.medianTemp;
-          document.getElementById("chennai-std-dev").textContent = chennaiData.stdDev;
-    
-          document.getElementById("madurai-mean-temp").textContent = maduraiData.meanTemp;
-          document.getElementById("madurai-median-temp").textContent = maduraiData.medianTemp;
-          document.getElementById("madurai-std-dev").textContent = maduraiData.stdDev;
-        })
-        .catch((error) => {
-          console.error("Error fetching analysis data:", error);
-        });
-    });
-    </script>
+          Promise.all([
+              fetch("/api/temperature-analysis/chennai").then(response => response.json()),
+              fetch("/api/temperature-analysis/madurai").then(response => response.json())
+          ])
+          .then(([chennaiAnalysis, maduraiAnalysis]) => {
+              console.log("Chennai Analysis:", chennaiAnalysis);
+              console.log("Madurai Analysis:", maduraiAnalysis);
+      
+              // Update Chennai table cells
+              document.getElementById("chennai-mean-temp").textContent = chennaiAnalysis.meanTemperature;
+              document.getElementById("chennai-median-temp").textContent = chennaiAnalysis.medianTemperature;
+              document.getElementById("chennai-std-dev").textContent = chennaiAnalysis.standardDeviation;
+      
+              // Update Madurai table cells
+              document.getElementById("madurai-mean-temp").textContent = maduraiAnalysis.meanTemperature;
+              document.getElementById("madurai-median-temp").textContent = maduraiAnalysis.medianTemperature;
+              document.getElementById("madurai-std-dev").textContent = maduraiAnalysis.standardDeviation;
+          })
+          .catch(error => {
+              console.error("Error fetching or processing temperature analysis data:", error);
+          });
+      });
+      </script>
+      
 
 
 <br><br>
 <hr style="border-color:goldenrod; border-width: 1px;">
 <br><br>
 
-    <!-- Apparent_Temperature Chart START -->
-    <h1 class="mb-5 text-4xl font- pl-9" id="ref2">Apparent Temperature</h1>
-    <div id="apparentTemperatureChart" class=" pr-7">
-      <div>
-        <canvas id="apparentweatherChart"></canvas>
+      <!-- Apparent Temperature Chart -->
+      <h1 class="mb-5 text-4xl font- pl-9" id="ref2">Apparent Temperature</h1>
+      <div id="apparentTemperatureChart" class="pr-7">
+        <canvas id="apparentWeatherChart"></canvas>
       </div>
+
+      <!-- Red line separator -->
+      <br><br>
+      <hr style="border-color:black; border-width: 1px;">
 
       <script>
         document.addEventListener("DOMContentLoaded", function () {
-          // Fetch data from SQL table
+          // Fetch data for both Chennai and Madurai
           Promise.all([
-            fetch("/api/apparent-weather-data/chennai").then((response) =>
-              response.json()
-            ),
-            fetch("/api/apparent-weather-data/madurai").then((response) =>
-              response.json()
-            ),
+            fetch("/api/apparent-weather-data/chennai").then(response => response.json()),
+            fetch("/api/apparent-weather-data/madurai").then(response => response.json())
           ])
-            .then(([chennaiData, maduraiData]) => {
-              const chartData = {
-                labels: chennaiData.labels,
-                datasets: [
-                  {
-                    label: "Chennai Apparent (°C)",
-                    data: chennaiData.apparentTemperatures,
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    borderColor: "rgba(255, 99, 132, 1)",
-                    borderWidth: 1,
-                    yAxisID: "y",
+          .then(([chennaiData, maduraiData]) => {
+            // Update chart with fetched data
+            updateApparentWeatherChart(chennaiData, maduraiData);
+          })
+          .catch(error => {
+            console.error("Error fetching apparent weather data:", error);
+          });
+
+          function updateApparentWeatherChart(chennaiData, maduraiData) {
+            const chartData = {
+              labels: chennaiData.data.map(entry => entry.time), // Use 'time' from the data
+              datasets: [
+                {
+                  label: "Chennai Apparent (°C)",
+                  data: chennaiData.data.map(entry => entry.apparent_temperature),
+                  backgroundColor: "rgba(255, 99, 132, 0.2)",
+                  borderColor: "rgba(255, 99, 132, 1)",
+                  borderWidth: 1,
+                  yAxisID: "y",
+                },
+                {
+                  label: "Madurai Apparent (°C)",
+                  data: maduraiData.data.map(entry => entry.apparent_temperature),
+                  backgroundColor: "rgba(54, 162, 235, 0.2)",
+                  borderColor: "rgba(54, 162, 235, 1)",
+                  borderWidth: 1,
+                  yAxisID: "y1",
+                },
+              ],
+            };
+
+            const ctx = document.getElementById("apparentWeatherChart").getContext("2d");
+
+            new Chart(ctx, {
+              type: "line",
+              data: chartData,
+              options: {
+                responsive: true,
+                interaction: {
+                  mode: "index",
+                  intersect: false,
+                },
+                stacked: false,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: "Apparent Temperature (°C)",
                   },
-                  {
-                    label: "Madurai Apparent (°C)",
-                    data: maduraiData.apparentTemperatures,
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    borderColor: "rgba(54, 162, 235, 1)",
-                    borderWidth: 1,
-                    yAxisID: "y1",
+                },
+                scales: {
+                  y: {
+                    type: "linear",
+                    display: true,
+                    position: "left",
                   },
-                ],
-              };
-      
-              const ctx = document
-                .getElementById("apparentweatherChart")
-                .getContext("2d");
-      
-              new Chart(ctx, {
-                type: "line",
-                data: chartData,
-                options: {
-                  responsive: true,
-                  interaction: {
-                    mode: "index",
-                    intersect: false,
-                  },
-                  stacked: false,
-                  plugins: {
-                    title: {
-                      display: true,
-                      text: "Apparent Temperature (°C)",
-                    },
-                  },
-                  scales: {
-                    y: {
-                      type: "linear",
-                      display: true,
-                      position: "left",
-                    },
-                    y1: {
-                      type: "linear",
-                      display: true,
-                      position: "right",
-                      grid: {
-                        drawOnChartArea: false,
-                      },
+                  y1: {
+                    type: "linear",
+                    display: true,
+                    position: "right",
+                    grid: {
+                      drawOnChartArea: false,
                     },
                   },
                 },
-              });
-            })
-            .catch((error) => {
-              console.error("Error fetching weather data:", error);
+              },
             });
+          }
         });
       </script>
 
 
-    <!-- red line seperator -->
-    <br><br>
-    <hr style="border-color:black; border-width: 1px;">
-    <!-- Apparent Temperature Analysis Output Section -->
-    <div class="analysis-section mb-5 text-4xl font- pl-9">
-      <h2 class="text-3xl font-bold">Apparent Temperature Analysis Output</h2><br>
-      <table class="table w-full">
-        <thead>
-          <tr>
-            <th class="text-xl">City</th>
-            <th class="text-xl">Mean Apparent Temperature (°C)</th>
-            <th class="text-xl">Median Apparent Temperature (°C)</th>
-            <th class="text-xl">Standard Deviation</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Chennai</td>
-            <td id="chennai-mean-app-temp">...</td>
-            <td id="chennai-median-app-temp">...</td>
-            <td id="chennai-std-dev-app">...</td>
-          </tr>
-          <tr>
-            <td>Madurai</td>
-            <td id="madurai-mean-app-temp">...</td>
-            <td id="madurai-median-app-temp">...</td>
-            <td id="madurai-std-dev-app">...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<!-- Apparent Temperature Analysis Output Section -->
+<div class="analysis-section mb-5 text-4xl font- pl-9">
+  <h2 class="text-3xl font-bold">Apparent Temperature Analysis Output</h2><br>
+  <table class="table w-full">
+    <thead>
+      <tr>
+        <th class="text-xl">City</th>
+        <th class="text-xl">Mean Apparent Temperature (°C)</th>
+        <th class="text-xl">Median Apparent Temperature (°C)</th>
+        <th class="text-xl">Standard Deviation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Chennai</td>
+        <td id="chennai-mean-app-temp">Loading...</td>
+        <td id="chennai-median-app-temp">Loading...</td>
+        <td id="chennai-std-dev-app">Loading...</td>
+      </tr>
+      <tr>
+        <td>Madurai</td>
+        <td id="madurai-mean-app-temp">Loading...</td>
+        <td id="madurai-median-app-temp">Loading...</td>
+        <td id="madurai-std-dev-app">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Fetch data for both Chennai and Madurai
+  Promise.all([
+    fetch("/api/apparent-temperature-analysis/chennai").then(response => response.json()),
+    fetch("/api/apparent-temperature-analysis/madurai").then(response => response.json())
+  ])
+  .then(([chennaiData, maduraiData]) => {
+    // Update analysis output with fetched data
+    updateApparentTemperatureTable(chennaiData, maduraiData);
+  })
+  .catch(error => {
+    console.error("Error fetching apparent weather data for chart:", error);
+  });
+
+  function updateApparentTemperatureTable(chennaiData, maduraiData) {
+    // Update Chennai row
+    document.getElementById("chennai-mean-app-temp").textContent = chennaiData.meanApparentTemperature.toFixed(2);
+    document.getElementById("chennai-median-app-temp").textContent = chennaiData.medianApparentTemperature.toFixed(2);
+    document.getElementById("chennai-std-dev-app").textContent = chennaiData.standardDeviation.toFixed(2);
+
+    // Update Madurai row
+    document.getElementById("madurai-mean-app-temp").textContent = maduraiData.meanApparentTemperature.toFixed(2);
+    document.getElementById("madurai-median-app-temp").textContent = maduraiData.medianApparentTemperature.toFixed(2);
+    document.getElementById("madurai-std-dev-app").textContent = maduraiData.standardDeviation.toFixed(2);
+  }
+});
+
+</script>
 
 
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Fetch data from server
-        Promise.all([
-          fetch("/api/apparent-analysis-data/chennai").then((response) => response.json()),
-          fetch("/api/apparent-analysis-data/madurai").then((response) => response.json()),
-        ])
-          .then(([chennaiData, maduraiData]) => {
-            // Update table with fetched data
-            document.getElementById("chennai-mean-app-temp").textContent = chennaiData.meanAppTemp;
-            document.getElementById("chennai-median-app-temp").textContent = chennaiData.medianAppTemp;
-            document.getElementById("chennai-std-dev-app").textContent = chennaiData.stdDevApp;
-    
-            document.getElementById("madurai-mean-app-temp").textContent = maduraiData.meanAppTemp;
-            document.getElementById("madurai-median-app-temp").textContent = maduraiData.medianAppTemp;
-            document.getElementById("madurai-std-dev-app").textContent = maduraiData.stdDevApp;
-          })
-          .catch((error) => {
-            console.error("Error fetching apparent temperature analysis data:", error);
-          });
-      });
-    </script>
-
-    <!-- Apparent_Temperature Chart END -->
+<!-- Apparent Temperature END -->
 
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Fetch data from server
-        Promise.all([
-          fetch("/api/apparent-analysis-data/chennai").then((response) => response.json()),
-          fetch("/api/apparent-analysis-data/madurai").then((response) => response.json()),
-        ])
-          .then(([chennaiData, maduraiData]) => {
-            // Update table with fetched data
-            document.getElementById("chennai-mean-app-temp").textContent = chennaiData.meanAppTemp;
-            document.getElementById("chennai-median-app-temp").textContent = chennaiData.medianAppTemp;
-            document.getElementById("chennai-std-dev-app").textContent = chennaiData.stdDevApp;
-    
-            document.getElementById("madurai-mean-app-temp").textContent = maduraiData.meanAppTemp;
-            document.getElementById("madurai-median-app-temp").textContent = maduraiData.medianAppTemp;
-            document.getElementById("madurai-std-dev-app").textContent = maduraiData.stdDevApp;
-          })
-          .catch((error) => {
-            console.error("Error fetching apparent temperature analysis data:", error);
-          });
-      });
-    </script>
 
 <br><br><br><br><br><br><br><br><br>
 
