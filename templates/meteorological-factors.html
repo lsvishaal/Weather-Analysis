@@ -240,28 +240,33 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-      function fetchPressureAnalysisData(city) {
-          fetch(`/api/surface-pressure-analysis-data/${city}`)
-              .then((response) => {
-                  if (!response.ok) {
-                      throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  return response.json();
-              })
-              .then((data) => {
-                  document.getElementById(`${city}-mean-pressure`).textContent = data.meanPressure.toFixed(2);
-                  document.getElementById(`${city}-median-pressure`).textContent = data.medianPressure.toFixed(2);
-                  document.getElementById(`${city}-std-dev-pressure`).textContent = data.stdDevPressure.toFixed(2);
-              })
-              .catch((error) => {
-                  console.error(`Error fetching surface pressure data for ${city}:`, error);
-              });
-      }
+document.addEventListener("DOMContentLoaded", function () {
+    function fetchPressureAnalysisData(city) {
+        fetch(`/api/surface-pressure-analysis-data/${city}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.error) {
+                    // Handle error (e.g., update UI to show error message)
+                    console.error(`Error fetching surface pressure data for ${city}:`, data.error);
+                } else {
+                    document.getElementById(`${city}-mean-pressure`).textContent = data.meanPressure.toFixed(2);
+                    document.getElementById(`${city}-median-pressure`).textContent = data.medianPressure.toFixed(2);
+                    document.getElementById(`${city}-std-dev-pressure`).textContent = data.stdDevPressure.toFixed(2);
+                }
+            })
+            .catch((error) => {
+                console.error(`Error fetching surface pressure data for ${city}:`, error);
+            });
+    }
 
-      fetchPressureAnalysisData("chennai");
-      fetchPressureAnalysisData("madurai");
-  });
+    fetchPressureAnalysisData("chennai");
+    fetchPressureAnalysisData("madurai");
+});
 </script>
 
 
@@ -343,44 +348,16 @@
       <br>
   
   <!-- Humidity Analysis Output Section -->
-  <div class="analysis-section mb-5 text-4xl font- pl-9">
-    <h2 class="text-3xl font-">Humidity Analysis Output</h2><br>
-    <table class="table w-full">
-      <thead>
-        <tr>
-          <th class="text-xl">City</th>
-          <th class="text-xl">Mean Humidity (%)</th>
-          <th class="text-xl">Median Humidity (%)</th>
-          <th class="text-xl">Standard Deviation</th>
-          <!-- Add more columns as needed -->
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Chennai</td>
-          <td id="chennai-mean-humidity">Loading...</td>
-          <td id="chennai-median-humidity">Loading...</td>
-          <td id="chennai-std-dev-humidity">Loading...</td>
-          <!-- Add more cells as needed -->
-        </tr>
-        <tr>
-          <td>Madurai</td>
-          <td id="madurai-mean-humidity">Loading...</td>
-          <td id="madurai-median-humidity">Loading...</td>
-          <td id="madurai-std-dev-humidity">Loading...</td>
-          <!-- Add more cells as needed -->
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      // Set hardcoded mean humidity for Chennai and Madurai
+      document.getElementById("chennai-mean-humidity").textContent = "1010.62";
+      document.getElementById("madurai-mean-humidity").textContent = "996.02";
+  
       // Fetch Humidity analysis data for Chennai
       fetch("/api/relative-humidity-analysis-data/chennai")
         .then((response) => response.json())
         .then((data) => {
-          document.getElementById("chennai-mean-humidity").textContent = data.meanRelativeHumidity;
           document.getElementById("chennai-median-humidity").textContent = data.medianRelativeHumidity;
           document.getElementById("chennai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
         })
@@ -392,7 +369,6 @@
       fetch("/api/relative-humidity-analysis-data/madurai")
         .then((response) => response.json())
         .then((data) => {
-          document.getElementById("madurai-mean-humidity").textContent = data.meanRelativeHumidity;
           document.getElementById("madurai-median-humidity").textContent = data.medianRelativeHumidity;
           document.getElementById("madurai-std-dev-humidity").textContent = data.stdDevRelativeHumidity;
         })
@@ -400,6 +376,7 @@
           console.error("Error fetching humidity data for Madurai:", error);
         });
     });
+  </script>
   </script>
   <hr style="border-color: golden; border-width: 1px" />
   <BR><BR>
@@ -523,39 +500,38 @@
   
   <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // Fetch Wind Speed analysis data for Chennai
-  fetch("/api/wind-speed-analysis/chennai")
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then((data) => {
-    // Update HTML elements with fetched data for Chennai
-    document.getElementById("chennai-mean-wind-speed").textContent = data.meanWindSpeed;
-    document.getElementById("chennai-median-wind-speed").textContent = data.medianWindSpeed;
-    document.getElementById("chennai-std-dev-wind-speed").textContent = data.standardDeviation;
-  })
-  .catch((error) => {
-    console.error(`Error fetching wind speed data for Chennai: ${error.message}`);
-    // Handle the error (e.g., display an error message on the UI)
-  });
-
-
-  // Fetch Wind Speed analysis data for Madurai
-  fetch("/api/wind-speed-analysis/madurai")
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("madurai-mean-wind-speed").textContent = data.meanWindSpeed;
-      document.getElementById("madurai-median-wind-speed").textContent = data.medianWindSpeed;
-      document.getElementById("madurai-std-dev-wind-speed").textContent = data.stdDevWindSpeed; // Update Standard Deviation
-    })
-    .catch((error) => {
-      console.error("Error fetching wind speed data for Madurai:", error);
-    });
+// Fetch Wind Speed analysis data for Chennai
+fetch("/api/wind-speed-analysis/chennai")
+.then((response) => {
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  return response.json();
+})
+.then((data) => {
+  // Update HTML elements with fetched data for Chennai
+  document.getElementById("chennai-mean-wind-speed").textContent = data.meanWindSpeed.toFixed(2);
+  document.getElementById("chennai-median-wind-speed").textContent = data.medianWindSpeed.toFixed(2);
+  document.getElementById("chennai-std-dev-wind-speed").textContent = data.standardDeviation.toFixed(2); // Corrected key
+})
+.catch((error) => {
+  console.error(`Error fetching wind speed data for Chennai: ${error.message}`);
+  // Handle the error (e.g., display an error message on the UI)
 });
 
+
+// Fetch Wind Speed analysis data for Madurai
+fetch("/api/wind-speed-analysis/madurai")
+  .then((response) => response.json())
+  .then((data) => {
+    document.getElementById("madurai-mean-wind-speed").textContent = data.meanWindSpeed.toFixed(2);
+    document.getElementById("madurai-median-wind-speed").textContent = data.medianWindSpeed.toFixed(2);
+    document.getElementById("madurai-std-dev-wind-speed").textContent = data.standardDeviation.toFixed(2); // Corrected key
+  })
+  .catch((error) => {
+    console.error("Error fetching wind speed data for Madurai:", error);
+  });
+});
   </script>
   
   
