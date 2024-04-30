@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 import sqlite3
 import statistics
+import re
 
 app = Flask(__name__, template_folder="templates")
 
@@ -15,18 +16,14 @@ def fetch_data(query):
         connection = get_connection()  # Assuming get_connection() returns a valid database connection
         cursor = connection.cursor()
         cursor.execute(query)
-        data = cursor.fetchall()
+        data = [float(item[0]) for item in cursor.fetchall()]  # Convert strings to floats
         connection.close()
         return data
     except Exception as e:
         # Log the error for debugging purposes
         print(f"Error executing query: {query}")
         print(f"Error details: {str(e)}")
-        # If needed, log the full traceback for detailed debugging
-        # import traceback
-        # traceback.print_exc()
         return None
-
 
 @app.route("/")
 def home():
@@ -161,34 +158,43 @@ def surface_pressure_data(city):
         return jsonify({"error": str(e)}), 500
     
 
-@app.route("/api/surface-pressure-analysis-data/<city>")
-
 def sanitize(input_string):
-    import re
-    return re.sub(r'[^a-zA-Z0-9]', '', input_string)
+     # Only remove characters that could potentially be harmful in a SQL query
+     return re.sub(r'[;\'"--]', '', input_string)
+
+def fetch_surface_pressures(query):
+    try:
+        connection = get_connection()  # Assuming get_connection() function is implemented
+        cursor = connection.cursor()
+        cursor.execute(query)
+        data = cursor.fetchall()
+        connection.close()
+
+        # Extract surface pressures and convert to float
+        surface_pressures = [float(row[0]) for row in data if isinstance(row[0], str) and row[0].replace('.', '', 1).isdigit()]
+        return surface_pressures
+    except Exception as e:
+        print(f"Error fetching surface pressures: {str(e)}")
+        return []
 
 
-import statistics
-from flask import jsonify
-
+@app.route("/api/surface-pressure-analysis/<city>")
 def pressure_analysis_data(city):
     try:
-        print(f"Fetching surface pressure analysis data for {city}...")
-
         # Ensure the city parameter is safe to use in the SQL query (sanitize if necessary)
         normalized_city = sanitize(city)
 
-        # Construct the SQL query to calculate mean surface pressure
-        query = f"SELECT surface_pressure FROM {normalized_city}_weather"
-
-        print("Executing SQL query:", query)
+        # Construct the SQL query to fetch surface pressure data for the specified city at 9 AM
+        query = f"SELECT surface_pressure FROM {normalized_city.lower()}_weather WHERE strftime('%H', time) = '09'"
+        app.logger.info(f"Executing query: {query}")  # Log query for debugging
 
         # Fetch surface pressure data from the database
         surface_pressures = fetch_surface_pressures(query)
+        app.logger.info(f"Data fetched: {surface_pressures}")  # Log fetched data for debugging
 
         # Check if any data was returned
         if not surface_pressures:
-            print(f"No surface pressure data found for {city.capitalize()}")
+            app.logger.error(f"No surface pressure data found for {city.capitalize()}")
             return jsonify({"error": f"No surface pressure data found for {city.capitalize()}"}), 404
 
         # Calculate mean, median, and standard deviation of surface pressures
@@ -211,28 +217,9 @@ def pressure_analysis_data(city):
 
     except Exception as e:
         # Log the error for debugging purposes
-        print(f"Error fetching pressure analysis data for {city}: {str(e)}")
+        app.logger.error(f"Error fetching pressure analysis data for {city}: {str(e)}")
         # Return error response
         return jsonify({"error": "Internal server error"}), 500
-
-def fetch_surface_pressures(query):
-    try:
-        connection = get_connection()  # Assuming get_connection() function is implemented
-        cursor = connection.cursor()
-        cursor.execute(query)
-        data = [row[0] for row in cursor.fetchall()]  # Extracting surface pressures from fetched data
-        connection.close()
-        return data
-    except Exception as e:
-        print(f"Error fetching surface pressures: {str(e)}")
-        return []  # Return empty list if there's an error
-
-def sanitize(city):
-    # Perform any necessary sanitation or validation of the city name here
-    # Example: Convert to lowercase and remove any unwanted characters
-    return city.lower().strip().replace(" ", "_")
-
-
 
 @app.route("/api/relative-humidity/<city>")
 def relative_humidity_data(city):
@@ -256,6 +243,52 @@ def relative_humidity_data(city):
         return jsonify(response)
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def sanitize(city):
+    return re.sub(r'\W+', '', city)
+
+@app.route("/api/relative-humidity-analysis-data/<city>")
+def humidity_analysis_data(city):
+    try:
+        # Ensure the city parameter is safe to use in the SQL query (sanitize if necessary)
+        normalized_city = sanitize(city)
+
+        # Construct the SQL query to fetch relative humidity data for the specified city at 9 AM
+        query = f"SELECT relative_humidity_2m FROM {normalized_city.lower()}_weather WHERE strftime('%H', time) = '09'"
+
+        print("Executing SQL query:", query)
+
+        # Fetch relative humidity data from the database
+        relative_humidities = fetch_data(query)
+
+        # Check if any data was returned
+        if not relative_humidities:
+            print(f"No relative humidity data found for {city.capitalize()}")
+            return jsonify({"error": f"No relative humidity data found for {city.capitalize()}"}), 404
+
+        # Calculate mean, median, and standard deviation of relative humidities
+        mean_humidity = statistics.mean(relative_humidities)
+        median_humidity = statistics.median(relative_humidities)
+        std_dev_humidity = statistics.stdev(relative_humidities) if len(relative_humidities) > 1 else 0
+
+        # Round standard deviation to 2 decimal places
+        std_dev_humidity = round(std_dev_humidity, 2)
+
+        # Prepare response JSON
+        result = {
+            "meanRelativeHumidity": mean_humidity,
+            "medianRelativeHumidity": median_humidity,
+            "stdDevRelativeHumidity": std_dev_humidity
+        }
+
+        # Return successful response
+        return jsonify(result), 200
+
+    except Exception as e:
+        # Log the error for debugging purposes
+        print(f"Error fetching humidity analysis data for {city}: {str(e)}")
+        # Return error response
         return jsonify({"error": str(e)}), 500
 
 
@@ -371,7 +404,7 @@ def wind_speed_analysis(city):
             return jsonify({"error": f"No wind speed data found for {city.capitalize()} at 9 AM"}), 404
 
         # Extract wind speeds from the fetched data
-        wind_speeds = [float(row[0]) for row in data]  # Convert to float
+        wind_speeds = data  # Use data directly
 
         # Calculate mean, median, and standard deviation of wind speeds
         mean_wind_speed = statistics.mean(wind_speeds)
@@ -391,7 +424,6 @@ def wind_speed_analysis(city):
     except Exception as e:
         # Handle any unexpected exceptions and return an error response
         return jsonify({"error": str(e)}), 500
-    
 
 
 # Route to render the temperature chart page
