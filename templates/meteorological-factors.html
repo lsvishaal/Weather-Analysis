@@ -403,7 +403,7 @@
   </script>
   <hr style="border-color: golden; border-width: 1px" />
   <BR><BR>
-  <!-- Explanation for Surface Pressure Analysis -->
+  <!-- Explanation for Surface Pressure Analysis
   <div class="analysis-explanation mb-5 pl-9">
     <h3 class="text-xl font-">Surface Pressure Analysis Summary</h3>
     <p class="text-l">
@@ -412,13 +412,13 @@
       the atmospheric pressure variations across these cities. 
     </p>
   </div>
+   
   
-  
-      <!-- red line seperator -->
+       red line seperator 
       <br /><br />
       <hr style="border-color: golden; border-width: 1px" />
       <br /><br />
-  
+    -->
 <!-- Wind Speed Chart -->
 <h1 class="mb-5 text-4xl font pl-9">Wind Speed</h1>
 <div id="windSpeedChart">
@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then((data) => {
       document.getElementById("madurai-mean-wind-speed").textContent = data.meanWindSpeed;
       document.getElementById("madurai-median-wind-speed").textContent = data.medianWindSpeed;
-      document.getElementById("madurai-std-dev-wind-speed").textContent = data.stdDevWindSpeed; // Update Standard Deviation
+      document.getElementById("madurai-std-dev-wind-speed").textContent = data.standardDeviation; // Update Standard Deviation
     })
     .catch((error) => {
       console.error("Error fetching wind speed data for Madurai:", error);

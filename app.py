@@ -98,7 +98,6 @@ def temperature_analysis(city):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-from flask import jsonify
 
 @app.route("/api/apparent-temperature-analysis/<city>")
 def apparent_temperature_analysis(city):
@@ -167,9 +166,6 @@ def sanitize(input_string):
     import re
     return re.sub(r'[^a-zA-Z0-9]', '', input_string)
 
-
-import statistics
-from flask import jsonify
 
 def pressure_analysis_data(city):
     try:
@@ -258,9 +254,6 @@ def relative_humidity_data(city):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-from flask import jsonify
-import statistics
 
 def pressure_analysis_data(city):
     try:
