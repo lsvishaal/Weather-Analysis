@@ -37,29 +37,59 @@ This project is a Flask-based web application for retrieving and analyzing weath
 
 - Python 3.x
 - Flask
-    blinker==1.7.0
-    certifi==2024.2.2
-    charset-normalizer==3.3.2
-    click==8.1.7
-    colorama==0.4.6
-    Flask==3.0.2
-    idna==3.7
-    itsdangerous==2.2.0
-    Jinja2==3.1.3
-    MarkupSafe==2.1.5
-    mysql-connector-repackaged==0.3.1
-    numpy==1.26.4
-    PyMySQL==1.1.0
-    requests==2.31.0
-    urllib3==2.2.1
-    Werkzeug==3.0.2
-
-
 - SQLite3
+- 
+### Python Packages
+
+- blinker==1.7.0
+- certifi==2024.2.2
+- charset-normalizer==3.3.2
+- click==8.1.7
+- colorama==0.4.6
+- Flask==3.0.2
+- idna==3.7
+- itsdangerous==2.2.0
+- Jinja2==3.1.3
+- MarkupSafe==2.1.5
+- mysql-connector-repackaged==0.3.1
+- numpy==1.26.4
+- PyMySQL==1.1.0
+- requests==2.31.0
+- urllib3==2.2.1
+- Werkzeug==3.0.2
+
 
 ## Installation
 
 1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/yourusername/weather-data-analysis-api.git
+    cd weather-data-analysis-api
+    ```
+
+2. Create a virtual environment and activate it:
+
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
+
+3. Install the required packages:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+1. Run the Flask application:
+
+    ```bash
+    python app.py
+    ```
+
+2. Open your web browser and navigate to `http://127.0.0.1:5000`.
 
 ```bash
 git clone https://github.com/yourusername/weather-data-analysis-api.git
