@@ -9,6 +9,8 @@ This project is a Flask-based web application for retrieving and analyzing weath
 - Fetch temperature data for a specified city at 9 AM.
 - Fetch apparent temperature data for a specified city at 9 AM.
 - Fetch surface pressure data for a specified city at 9 AM.
+- ![image](https://github.com/lsvishaal/Weather-Analysis/assets/62366204/5955251c-38f4-4e92-bf41-8484e02315ab)
+
 - Fetch relative humidity data for a specified city at 9 AM.
 - Fetch wind speed data for a specified city at 9 AM.
 - Analyze and return statistical data (mean, median, standard deviation) for:
