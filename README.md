@@ -92,8 +92,7 @@ This project is a Flask-based web application for retrieving and analyzing weath
 2. Open your web browser and navigate to `http://127.0.0.1:5000`.
 
 ```bash
-git clone https://github.com/yourusername/weather-data-analysis-api.git
-cd weather-data-analysis-api
+
 
 
 
